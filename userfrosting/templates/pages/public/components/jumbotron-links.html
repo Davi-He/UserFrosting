@@ -3,18 +3,18 @@
     {% if can_register %}
     <div class='row'>
         <div class='col-md-12'>
-          <a href='register.php' class='btn btn-link' role='button' value='Register'>Not a member yet?  Register here.</a>
+          <a href='{{uri_public_root}}account/register' class='btn btn-link' role='button' value='Register'>Not a member yet?  Register here.</a>
         </div>
     </div>
     {% endif%}
     <div class='row'>
         <div class='col-md-12'>
-          <a href='forgot_password.php' class='btn btn-link' role='button' value='Forgot Password'>Forgot your password?</a>
+          <a href='{{uri_public_root}}account/forgot-password' class='btn btn-link' role='button' value='Forgot Password'>Forgot your password?</a>
         </div>
     </div>
     <div class='row'>
         <div class='col-md-12'>
-          <a href='resend_activation.php' class='btn btn-link' role='button' value='Activate'>Resend activation email</a>
+          <a href='{{uri_public_root}}account/resend-activation' class='btn btn-link' role='button' value='Activate'>Resend activation email</a>
         </div>
     </div>
 </div>

@@ -94,99 +94,6 @@
         ]
     },
     {
-        "name": "alexweissman/fortress",
-        "version": "dev-master",
-        "version_normalized": "9999999-dev",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/alexweissman/fortress.git",
-            "reference": "74f16d5b47cf313eebb3b03f507581387b35b3d4"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/alexweissman/fortress/zipball/74f16d5b47cf313eebb3b03f507581387b35b3d4",
-            "reference": "74f16d5b47cf313eebb3b03f507581387b35b3d4",
-            "shasum": ""
-        },
-        "require": {
-            "ezyang/htmlpurifier": ">=4.6.0",
-            "php": ">=5.4.0",
-            "vlucas/valitron": "1.2.3"
-        },
-        "time": "2015-02-11 21:11:38",
-        "type": "library",
-        "installation-source": "source",
-        "autoload": {
-            "classmap": [
-                "fortress/"
-            ]
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "MIT"
-        ],
-        "authors": [
-            {
-                "name": "Alexander Weissman",
-                "homepage": "http://alexanderweissman.com"
-            }
-        ],
-        "description": "A PHP library for sanitizing, validating, and canonicalizing HTTP request data against a JSON Schema",
-        "homepage": "https://github.com/alexweissman/fortress",
-        "keywords": [
-            "php sanitization",
-            "php validation"
-        ]
-    },
-    {
-        "name": "alexweissman/bootsole",
-        "version": "dev-master",
-        "version_normalized": "9999999-dev",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/alexweissman/bootsole.git",
-            "reference": "390754fe4ed02160cb502334391badfba6b703e6"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/alexweissman/bootsole/zipball/390754fe4ed02160cb502334391badfba6b703e6",
-            "reference": "390754fe4ed02160cb502334391badfba6b703e6",
-            "shasum": ""
-        },
-        "require": {
-            "alexweissman/fortress": "dev-master",
-            "php": ">=5.4.0"
-        },
-        "time": "2015-02-09 19:32:13",
-        "type": "library",
-        "installation-source": "source",
-        "autoload": {
-            "classmap": [
-                "bootsole/htmlbuilder/"
-            ],
-            "files": [
-                "bootsole/config-bootsole.php"
-            ]
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "MIT"
-        ],
-        "authors": [
-            {
-                "name": "Alexander Weissman",
-                "homepage": "http://alexanderweissman.com"
-            }
-        ],
-        "description": "A nestable, object-oriented templating engine for generating beautiful Bootstrap-themed pages, forms, tables, and other components in PHP.",
-        "homepage": "https://github.com/alexweissman/bootsole",
-        "keywords": [
-            "bootstrap forms",
-            "php forms",
-            "php templating"
-        ]
-    },
-    {
         "name": "twig/twig",
         "version": "v1.18.0",
         "version_normalized": "1.18.0.0",
@@ -301,6 +208,99 @@
             "router",
             "routing",
             "sinatra"
+        ]
+    },
+    {
+        "name": "alexweissman/fortress",
+        "version": "dev-master",
+        "version_normalized": "9999999-dev",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/alexweissman/fortress.git",
+            "reference": "74f16d5b47cf313eebb3b03f507581387b35b3d4"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/alexweissman/fortress/zipball/74f16d5b47cf313eebb3b03f507581387b35b3d4",
+            "reference": "74f16d5b47cf313eebb3b03f507581387b35b3d4",
+            "shasum": ""
+        },
+        "require": {
+            "ezyang/htmlpurifier": ">=4.6.0",
+            "php": ">=5.4.0",
+            "vlucas/valitron": "1.2.3"
+        },
+        "time": "2015-02-11 21:11:38",
+        "type": "library",
+        "installation-source": "source",
+        "autoload": {
+            "classmap": [
+                "fortress/"
+            ]
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Alexander Weissman",
+                "homepage": "http://alexanderweissman.com"
+            }
+        ],
+        "description": "A PHP library for sanitizing, validating, and canonicalizing HTTP request data against a JSON Schema",
+        "homepage": "https://github.com/alexweissman/fortress",
+        "keywords": [
+            "php sanitization",
+            "php validation"
+        ]
+    },
+    {
+        "name": "alexweissman/bootsole",
+        "version": "dev-master",
+        "version_normalized": "9999999-dev",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/alexweissman/bootsole.git",
+            "reference": "390754fe4ed02160cb502334391badfba6b703e6"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/alexweissman/bootsole/zipball/390754fe4ed02160cb502334391badfba6b703e6",
+            "reference": "390754fe4ed02160cb502334391badfba6b703e6",
+            "shasum": ""
+        },
+        "require": {
+            "alexweissman/fortress": "dev-master",
+            "php": ">=5.4.0"
+        },
+        "time": "2015-02-09 19:32:13",
+        "type": "library",
+        "installation-source": "source",
+        "autoload": {
+            "classmap": [
+                "bootsole/htmlbuilder/"
+            ],
+            "files": [
+                "bootsole/config-bootsole.php"
+            ]
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Alexander Weissman",
+                "homepage": "http://alexanderweissman.com"
+            }
+        ],
+        "description": "A nestable, object-oriented templating engine for generating beautiful Bootstrap-themed pages, forms, tables, and other components in PHP.",
+        "homepage": "https://github.com/alexweissman/bootsole",
+        "keywords": [
+            "bootstrap forms",
+            "php forms",
+            "php templating"
         ]
     }
 ]
