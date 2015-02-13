@@ -30,7 +30,6 @@ THE SOFTWARE.
 */
 
 require_once("../userfrosting/config-userfrosting.php");
-require_once("../userfrosting/templates/template-components.php");
 
 // Public page
 
@@ -45,92 +44,27 @@ if(isUserLoggedIn()) {
 
 use \Bootsole as BS;
 
-global $email_login;
+// Load page schema
+$pageSchema = BS\PageSchema::load("default", BS\PATH_SCHEMA . "pages/pages.json");
 
-$header_content = [
+$loader = new Twig_Loader_Filesystem(BS\PATH_TEMPLATES);
+$twig = new Twig_Environment($loader);
+
+echo $twig->render("pages/public/login.html", [
     "author" => "Alex Weissman",
     "site_title" => SITE_TITLE,
+    "title" => SITE_TITLE,    
     "page_title" => "Login",
     "description" => "Login to your UserFrosting account.",
-    "favicon_path" => BS\URI_PUBLIC_ROOT . "css/favicon.ico"
-];
-
-// This loads the appropriate set of jumbotron links, depending on whether registration is enabled or disabled
-$jumbotron_links = [
-    "@source" => $can_register ? "pages/public/front-links-register.html" : "pages/public/front-links-noregister.html",
-    "@content" => []
-];
-
-// This gets the top nav links, and sets the appropriate active link
-$nb = templateNavbarPublic("login");
-
-$login_form = new BS\FormBuilder([
-    "@layout" => "horizontal",
-    "@label_width" => 0,
-    "@name" => "login",
-    "@action" => "api/process_login.php",
-    "@method" => "post",
-    "@components" => [
-        'username' => [
-            '@type' => 'text',         
-            '@label' => '',
-            '@placeholder' => ($email_login == 1) ? 'Username or Email' : 'Username'
-        ],
-        'password' => [
-            '@type' => 'password',
-            '@label' => '',
-            '@placeholder' => 'Password'
-        ],
-        'btn_login' => new BS\FormButtonBuilder([
-            '@type' => 'submit',
-            '@label' => 'Login',
-            '@css_classes' => ["btn-success"]
-        ])
-    ],
-    "jumbotron_links" => $jumbotron_links
-], "forms/form-login.html");
-
-
-$page = new BS\PageBuilder([
-    "@header" => $header_content,
-    "@name" => "login",             // "@name" must be unique for each page!
-    "site_title" => SITE_TITLE,
-    "main_nav" => $nb,
-    "content" => $login_form,
-    "main_title" => "Welcome to UserFrosting!",
-    "welcome_msg" => "Please sign in."
-], "pages/public/page-jumbotron.html");
-
-echo $page->render();
+    "favicon_path" => BS\URI_PUBLIC_ROOT . "css/favicon.ico",
+    "css_includes" => $pageSchema['css'],
+    "uri_css_root" => BS\URI_CSS_ROOT,
+    "js_includes" => $pageSchema['js'],
+    "uri_js_root" => BS\URI_JS_ROOT,
+    "uri_public_root" => BS\URI_PUBLIC_ROOT,
+    "active_page" => "login.php",
+    "email_login" => $email_login,
+    "can_register" => $can_register
+]);
 
 ?>
-
-<script>
-    $(document).ready(function() {            
-      alertWidget('display-alerts');
-      // Process form     
-      $("form[name='login']").submit(function(e){
-        // Prevent form from submitting twice
-        e.preventDefault();
-        var form = $(this);   
-        // Serialize and post to the backend script in ajax mode
-        var serializedData = form.serialize();
-        serializedData += '&ajaxMode=true';     
-        //console.log(serializedData);
-        var url = APIPATH + "process_login.php";
-        $.ajax({  
-          type: "POST",  
-          url: url,  
-          data: serializedData
-        }).done(function(result) {
-            var resultJSON = processJSONResult(result);
-            if (resultJSON['errors'] && resultJSON['errors'] > 0){
-              alertWidget('display-alerts');
-            } else {
-              window.location.replace("account");
-            }
-        });
-      });
-      
-    });
-</script>

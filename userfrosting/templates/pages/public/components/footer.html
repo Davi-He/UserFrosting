@@ -1,0 +1,10 @@
+<footer>
+  <div class="container">
+    <p>
+    &copy; <a href='http://www.userfrosting.com'>UserFrosting</a>, 2015
+    </p>
+  </div>
+</footer>
+{% for item in js_includes %}
+  <link rel="stylesheet" href="{{uri_js_root}}{{item}}" type="text/css" >
+{% endfor %}

@@ -1,0 +1,18 @@
+{% set navigation_bar = [['index.php', 'Home'], ['login.php', 'Login']] %}
+{% set can_register = can_register|default(false) %}
+{% if can_register %}
+    {% set navigation_bar = navigation_bar|merge([['register.php', 'Register']])  %}
+{% endif%}
+{% set active_page = active_page|default('index.php') %}
+{% block navigation %}
+<div class="header">
+    <ul class="nav navbar-nav nav-pills pull-right" id="navigation">
+    {% for item in navigation_bar %}
+    <li{% if item[0] == active_page %} class="active"{% endif%}>
+        <a role="menuitem" href="{{uri_public_root}}{{item[0]}}">{{item[1]}}</a>
+    </li>
+    {% endfor %}    
+    </ul>
+    <h3 class="text-muted">{{title}}</h3>
+</div>
+{% endblock %}

@@ -28,7 +28,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 */
-require_once("models/config.php");
+require_once("../userfrosting/config-userfrosting.php");
 
 setReferralPage(getAbsoluteDocumentPath(__FILE__));
 
@@ -51,214 +51,32 @@ if(isUserLoggedIn()) {
 	apiReturnError(false, SITE_ROOT);
 }
 
+use \Bootsole as BS;
+
+// Load page schema
+$pageSchema = BS\PageSchema::load("default", BS\PATH_SCHEMA . "pages/pages.json");
+
+$loader = new Twig_Loader_Filesystem(BS\PATH_TEMPLATES);
+$twig = new Twig_Environment($loader);
+
+echo $twig->render("pages/public/register.html", [
+    "author" => "Alex Weissman",
+    "site_title" => SITE_TITLE,
+    "title" => SITE_TITLE,    
+    "page_title" => "Register",
+    "description" => "Register for a UserFrosting account.",
+    "favicon_path" => BS\URI_PUBLIC_ROOT . "css/favicon.ico",
+    "css_includes" => $pageSchema['css'],
+    "uri_css_root" => BS\URI_CSS_ROOT,
+    "js_includes" => $pageSchema['js'],
+    "uri_js_root" => BS\URI_JS_ROOT,
+    "uri_public_root" => BS\URI_PUBLIC_ROOT,
+    "active_page" => "register.php",
+    "email_login" => $email_login,
+    "can_register" => $can_register,
+    "captcha_image" => generateCaptcha()
+]);
+
 ?>
 
-<!DOCTYPE html>
-<html lang="en">
-  <?php
-	echo renderTemplate("head.html", array("#SITE_ROOT#" => SITE_ROOT, "#SITE_TITLE#" => SITE_TITLE, "#PAGE_TITLE#" => "Register"));
-    
-    $fields = [
-        'user_name' => [
-            'type' => 'text',
-            'label' => 'Username',
-            'icon' => 'fa fa-fw fa-edit',
-            'validator' => [
-                'minLength' => 1,
-                'maxLength' => 25,
-                'label' => 'Username'
-            ],
-            'placeholder' => 'User name'
-        ],
-        'display_name' => [
-            'type' => 'text',
-            'label' => 'Display Name',
-            'icon' => 'fa fa-fw fa-edit',
-            'validator' => [
-                'minLength' => 1,
-                'maxLength' => 50,
-                'label' => 'Display name'
-            ],
-            'placeholder' => 'Display name'
-        ],          
-        'email' => [
-            'type' => 'text',
-            'label' => 'Email',
-            'icon' => 'fa fa-fw fa-envelope',
-            'validator' => [
-                'minLength' => 1,
-                'maxLength' => 150,
-                'email' => true,
-                'label' => 'Email'
-            ],
-            'placeholder' => 'Email address'
-        ],
-        'password' => [
-            'type' => 'password',
-            'label' => 'Password',
-            'icon' => 'fa fa-fw fa-key',
-            'validator' => [
-                'minLength' => 8,
-                'maxLength' => 50,
-                'label' => 'Password',
-                'passwordMatch' => 'passwordc'
-            ],
-            'placeholder' => '8-50 characters'
-        ],
-        'passwordc' => [
-            'type' => 'password',
-            'label' => 'Confirm password',
-            'icon' => 'fa fa-fw fa-key',
-            'validator' => [
-                'minLength' => 8,
-                'maxLength' => 50,
-                'label' => 'Password'
-            ],
-            'placeholder' => 'Re-enter your password'
-            
-        ],
-        'captcha' => [
-            'type' => 'text',
-            'label' => 'Confirm Security Code',
-            'icon' => 'fa fa-fw fa-eye',
-            'validator' => [
-                'minLength' => 1,
-                'maxLength' => 50,
-                'label' => 'Security code'
-            ],
-            'placeholder' => "Enter the code below, human!"            
-        ]
-    ];
-    
-    $captcha = generateCaptcha();
-    
-    $template = "
-        <form name='newUser' class='form-horizontal' id='newUser' role='form' action='api/create_user.php' method='post'>
-		  <div class='row'>
-			<div id='display-alerts' class='col-lg-12'>
-		  
-			</div>
-		  </div>		
-		  <div class='row'>
-			<div class='col-sm-12'>
-                {{user_name}}
-            </div>
-		  </div>
-		  <div class='row'>
-            <div class='col-sm-12'>
-                {{display_name}}
-            </div>
-		  </div>
-		  <div class='row'>
-			<div class='col-sm-12'>
-                {{email}}
-            </div>
-		  </div>		  
-		  <div class='row'>
-            <div class='col-sm-12'>
-                {{password}}
-            </div>
-		  </div>
-		  <div class='row'>
-            <div class='col-sm-12'>
-                {{passwordc}}
-            </div>
-		  </div>
-		  <div class='row'>
-            <div class='col-sm-12'>
-                {{captcha}}
-            </div>
-          </div>
-          <div class='form-group'>
-            <div class='col-sm-12'>
-                <img src='$captcha' id='captcha'>
-            </div>
-		  </div>
-		  <br>
-		  <div class='form-group'>
-			<div class='col-sm-12'>
-			  <button type='submit' class='btn btn-success submit' value='Register'>Register</button>
-			</div>
-		  </div>
-          <div class='collapse'>
-            <label>Spiderbro: Don't change me bro, I'm tryin'a catch some flies!</label>
-            <input name='spiderbro' id='spiderbro' value='http://'/>
-          </div>          
-		</form>";
-    
-    $fb = new FormBuilder($template, $fields, [], [], true);
-    
-  ?>
 
-  <body>
-    <div class="container">
-      <div class="header">
-        <ul class="nav nav-pills navbar pull-right">
-        </ul>
-        <h3 class="text-muted">UserFrosting</h3>
-      </div>
-      <div class="jumbotron">
-        <h1>Let's get started!</h1>
-        <p class="lead">Registration is fast and simple.</p>
-        <?php echo $fb->render(); ?>
-        
-	  </div>	
-      <?php echo renderTemplate("footer.html"); ?>
-
-    </div> <!-- /container -->
-
-<script>
-	$(document).ready(function() {
-		// Load navigation bar
-		$(".navbar").load("header-loggedout.php", function() {
-            $(".navbar .navitem-register").addClass('active');
-        });
-		
-		// Process submission
-        $("form[name='newUser']").submit(function(e){
-			e.preventDefault();
-            var form = $(this);
-            var errorMessages = validateFormFields('newUser');
-			if (errorMessages.length > 0) {
-				$('#display-alerts').html("");
-				$.each(errorMessages, function (idx, msg) {
-					$('#display-alerts').append("<div class='alert alert-danger'>" + msg + "</div>");
-				});	
-			} else {
-                // Process form                    
-                // Serialize and post to the backend script in ajax mode
-                var serializedData = form.serialize();
-                serializedData += '&ajaxMode=true';     
-                //console.log(serializedData);
-            
-                var url = APIPATH + "create_user.php";
-                $.ajax({  
-                  type: "POST",  
-                  url: url,  
-                  data: serializedData
-                }).done(function(result) {
-                  var resultJSON = processJSONResult(result);
-                  if (resultJSON['errors'] && resultJSON['errors'] > 0){
-                        console.log("error");
-						// Reload captcha
-						var img_src = APIPATH + 'generate_captcha.php?' + new Date().getTime();
-                        $.ajax({  
-                          type: "GET",  
-                          url: img_src,  
-                          dataType: "text"
-                        }).done(function(result) { 
-                            $('#captcha').attr('src', result);
-                            form.find('input[name="captcha"]' ).val("");
-                            alertWidget('display-alerts');
-                            return;
-                        });
-                  } else {
-                    window.location.replace('login.php');
-                  }
-                });   
-            }
-		});
-	});
-</script>
-</body>
-</html>

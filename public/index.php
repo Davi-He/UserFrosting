@@ -30,10 +30,8 @@ THE SOFTWARE.
 */
 
 require_once("../userfrosting/config-userfrosting.php");
-require_once("../userfrosting/templates/template-components.php");
 
 // Public page
-
 setReferralPage(getAbsoluteDocumentPath(__FILE__));
 
 //Forward the user to their default page if he/she is already logged in
@@ -45,48 +43,28 @@ if(isUserLoggedIn()) {
 
 use \Bootsole as BS;
 
-$header_content = [
+// Load page schema
+$pageSchema = BS\PageSchema::load("default", BS\PATH_SCHEMA . "pages/pages.json");
+
+$loader = new Twig_Loader_Filesystem(BS\PATH_TEMPLATES);
+$twig = new Twig_Environment($loader);
+
+echo $twig->render("pages/public/home.html", [
     "author" => "Alex Weissman",
     "site_title" => SITE_TITLE,
+    "title" => SITE_TITLE,    
     "page_title" => "A secure, modern user management system based on UserCake, jQuery, and Bootstrap.",
     "description" => "Main landing page for public access to this website.",
-    "favicon_path" => BS\URI_PUBLIC_ROOT . "css/favicon.ico"
-];
-
-// This loads the appropriate set of jumbotron links, depending on whether registration is enabled or disabled
-$jumbotron_links = [
-    "@source" => $can_register ? "pages/public/front-links-register.html" : "pages/public/front-links-noregister.html",
-    "@content" => []
-];
-
-// This gets the top nav links, and sets the appropriate active link
-$nb = templateNavbarPublic("home");
-
-$page = new BS\PageBuilder([
-    "@header" => $header_content,
-    "@name" => "index",             // "@name" must be unique for each page!
-    "site_title" => SITE_TITLE,
-    "main_nav" => $nb,
-    "content" => [
-        // This is the main content of the page.  For convenience, we inline it here but you could move it to separate .html source file if you prefer.
-        "@template" => '
-            <div class="row">
-                <div class="col-sm-12">
-                  <a href="login.php" class="btn btn-success" role="button" value="Login">Login</a>
-                </div>
-            </div>
-            <div class="jumbotron-links">
-                {{jumbotron_links}}
-            </div>
-        ',
-        "@content" => [
-            "jumbotron_links" => $jumbotron_links
-        ]
-    ],
-    "main_title" => "Welcome to UserFrosting!",
-    "welcome_msg" => "A secure, modern user management system based on UserCake, jQuery, and Bootstrap."
-], "pages/public/page-jumbotron.html");
-
-echo $page->render();
+    "favicon_path" => BS\URI_PUBLIC_ROOT . "css/favicon.ico",
+    "css_includes" => $pageSchema['css'],
+    "uri_css_root" => BS\URI_CSS_ROOT,
+    "js_includes" => $pageSchema['js'],
+    "uri_js_root" => BS\URI_JS_ROOT,
+    "uri_public_root" => BS\URI_PUBLIC_ROOT,
+    "active_page" => "index.php",
+    "email_login" => $email_login,
+    "can_register" => $can_register,
+    "captcha_image" => generateCaptcha()
+]);
 
 ?>
