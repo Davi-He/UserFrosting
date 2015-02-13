@@ -66,18 +66,10 @@ if (!defined("SCHEME_PREFIX")){
 if (Bootsole\SERVER_DEV) {
     /*********** Dev configuration **********/
     $config = [
-    /*
         "db" => [
             "dbname"   => "userfrosting", //Name of Database
             "username" => "root", //Name of database user
             "password" => "password", //Password for database user
-            "host" => "localhost"
-        ]
-        */
-        "db" => [
-            "dbname"   => "uf4", //Name of Database
-            "username" => "userfrosting", //Name of database user
-            "password" => "XCUvP2z7peePCnQ2", //Password for database user
             "host" => "localhost"
         ]
     ];
