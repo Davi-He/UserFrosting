@@ -3,7 +3,7 @@
         "validators" : {
             "required" : {
                 "messages" : {
-                    "default" : "'User name' is required.",
+                    "default" : "'Username' is required.",
                     "es_US" : "Por favor, ingrese su nombre de usuario"
                 }
             }

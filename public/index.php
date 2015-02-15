@@ -49,6 +49,15 @@ $pageSchema = BS\PageSchema::load("default", BS\PATH_SCHEMA . "pages/pages.json"
 // Twig templating object
 $loader = new Twig_Loader_Filesystem(BS\PATH_TEMPLATES);
 $twig = new Twig_Environment($loader);
+// Global Twig parameters
+$twig->addGlobal("favicon_path", BS\URI_PUBLIC_ROOT . "css/favicon.ico");
+$twig->addGlobal("css_includes", $pageSchema['css']);
+$twig->addGlobal("uri_css_root", BS\URI_CSS_ROOT);
+$twig->addGlobal("js_includes", $pageSchema['js']);
+$twig->addGlobal("uri_js_root", BS\URI_JS_ROOT);
+$twig->addGlobal("uri_public_root", BS\URI_PUBLIC_ROOT);
+$twig->addGlobal("uri_image_root", BS\URI_PUBLIC_ROOT . "images/");
+$twig->addGlobal("site_title", SITE_TITLE);
 
 // URI router
 $klein = new \Klein\Klein();
@@ -59,16 +68,9 @@ $klein->respond('GET', BS\URI_PUBLIC_RELATIVE, function(){
     
     echo $twig->render("pages/public/home.html", [
         "author" => "Alex Weissman",
-        "site_title" => SITE_TITLE,
         "title" => SITE_TITLE,    
         "page_title" => "A secure, modern user management system based on UserCake, jQuery, and Bootstrap.",
         "description" => "Main landing page for public access to this website.",
-        "favicon_path" => BS\URI_PUBLIC_ROOT . "css/favicon.ico",
-        "css_includes" => $pageSchema['css'],
-        "uri_css_root" => BS\URI_CSS_ROOT,
-        "js_includes" => $pageSchema['js'],
-        "uri_js_root" => BS\URI_JS_ROOT,
-        "uri_public_root" => BS\URI_PUBLIC_ROOT,
         "active_page" => "",
         "email_login" => $email_login,
         "can_register" => $can_register,
@@ -79,21 +81,17 @@ $klein->respond('GET', BS\URI_PUBLIC_RELATIVE, function(){
 $klein->respond('GET', BS\URI_PUBLIC_RELATIVE . 'account/login', function ($request, $response, $service) {
     global $pageSchema, $loader, $twig, $email_login, $can_register;
 
+    $validators = new Fortress\ClientSideValidator(BS\PATH_SCHEMA . "forms/form-login.json");
+    
     echo $twig->render("pages/public/login.html", [
         "author" => "Alex Weissman",
-        "site_title" => SITE_TITLE,
         "title" => SITE_TITLE,    
         "page_title" => "Login",
         "description" => "Login to your UserFrosting account.",
-        "favicon_path" => BS\URI_PUBLIC_ROOT . "css/favicon.ico",
-        "css_includes" => $pageSchema['css'],
-        "uri_css_root" => BS\URI_CSS_ROOT,
-        "js_includes" => $pageSchema['js'],
-        "uri_js_root" => BS\URI_JS_ROOT,
-        "uri_public_root" => BS\URI_PUBLIC_ROOT,
         "active_page" => "account/login",
         "email_login" => $email_login,
-        "can_register" => $can_register
+        "can_register" => $can_register,
+        "validators" => $validators->formValidationRulesJson()
     ]);
 });
 
@@ -106,29 +104,25 @@ $klein->respond('GET', BS\URI_PUBLIC_RELATIVE . 'account/register', function ($r
         exit();
     }
     
+    $validators = new Fortress\ClientSideValidator(BS\PATH_SCHEMA . "forms/register.json");
+    
     // If registration is disabled, send them back to the home page with an error message
     if (!$can_register){
         addAlert("danger", lang("ACCOUNT_REGISTRATION_DISABLED"));
-        header("Location: login.php");
+        header("Location: account/login");
         exit();
     }
 
     echo $twig->render("pages/public/register.html", [
         "author" => "Alex Weissman",
-        "site_title" => SITE_TITLE,
         "title" => SITE_TITLE,    
         "page_title" => "Register",
         "description" => "Register for a new UserFrosting account.",
-        "favicon_path" => BS\URI_PUBLIC_ROOT . "css/favicon.ico",
-        "css_includes" => $pageSchema['css'],
-        "uri_css_root" => BS\URI_CSS_ROOT,
-        "js_includes" => $pageSchema['js'],
-        "uri_js_root" => BS\URI_JS_ROOT,
-        "uri_public_root" => BS\URI_PUBLIC_ROOT,
         "active_page" => "account/register",
         "email_login" => $email_login,
         "can_register" => $can_register,
-        "captcha_image" => generateCaptcha()
+        "captcha_image" => generateCaptcha(),
+        "validators" => $validators->formValidationRulesJson()
     ]);
 });
 
@@ -140,46 +134,31 @@ $klein->respond('GET', BS\URI_PUBLIC_RELATIVE . 'account/forgot-password', funct
         
     echo $twig->render("pages/public/forgot-password.html", [
         "author" => "Alex Weissman",
-        "site_title" => SITE_TITLE,
         "title" => SITE_TITLE,    
         "page_title" => "Reset Password",
         "description" => "Reset your UserFrosting password.",
-        "favicon_path" => BS\URI_PUBLIC_ROOT . "css/favicon.ico",
-        "css_includes" => $pageSchema['css'],
-        "uri_css_root" => BS\URI_CSS_ROOT,
-        "js_includes" => $pageSchema['js'],
-        "uri_js_root" => BS\URI_JS_ROOT,
-        "uri_public_root" => BS\URI_PUBLIC_ROOT,
         "active_page" => "",
         "email_login" => $email_login,
         "can_register" => $can_register,
         "token" => $params["token"],
-        "confirm_ajax" => $params["token"] ? 1 : 0
+        "confirm_ajax" => $params["token"] ? 1 : 0,
+        "validators" => $validators->formValidationRulesJson()
     ]);
 
 });
 
 $klein->respond('GET', BS\URI_PUBLIC_RELATIVE . 'account/resend-activation', function ($request, $response, $service) {
     global $pageSchema, $loader, $twig, $email_login, $can_register;
-    $params = $request->paramsGet()->all(["token"]);
-    if(empty($params["token"]))
-        $params["token"] = null;
-        
+
     echo $twig->render("pages/public/resend-activation.html", [
         "author" => "Alex Weissman",
-        "site_title" => SITE_TITLE,
         "title" => SITE_TITLE,    
         "page_title" => "Resend Activation",
         "description" => "Resend the activation email for your new UserFrosting account.",
-        "favicon_path" => BS\URI_PUBLIC_ROOT . "css/favicon.ico",
-        "css_includes" => $pageSchema['css'],
-        "uri_css_root" => BS\URI_CSS_ROOT,
-        "js_includes" => $pageSchema['js'],
-        "uri_js_root" => BS\URI_JS_ROOT,
-        "uri_public_root" => BS\URI_PUBLIC_ROOT,
         "active_page" => "",
         "email_login" => $email_login,
-        "can_register" => $can_register
+        "can_register" => $can_register,
+        "validators" => $validators->formValidationRulesJson()
     ]);
 
 });
@@ -192,17 +171,9 @@ $klein->onHttpError(function ($code, $router) {
             $router->response()->body(
                 $twig->render("pages/public/404.html", [
                     "author" => "Alex Weissman",
-                    "site_title" => SITE_TITLE,
                     "title" => SITE_TITLE,    
                     "page_title" => "404 Error",
-                    "description" => "We couldn't deliver.  We're sorry.",
-                    "favicon_path" => BS\URI_PUBLIC_ROOT . "css/favicon.ico",
-                    "css_includes" => $pageSchema['css'],
-                    "uri_css_root" => BS\URI_CSS_ROOT,
-                    "js_includes" => $pageSchema['js'],
-                    "uri_js_root" => BS\URI_JS_ROOT,
-                    "uri_public_root" => BS\URI_PUBLIC_ROOT,
-                    "uri_image_root" => BS\URI_PUBLIC_ROOT . "images/"
+                    "description" => "We couldn't deliver.  We're sorry."
                 ])
             );
             break;

@@ -58,29 +58,6 @@
             }
         }
     },
-    "message" : {
-        "validators" : {
-        },
-        "sanitizers" : {
-            "purify": {}
-        }
-    },
-    "bunnies" : {
-        "validators" : {
-            "required" : {
-                "messages" : {
-                    "default" : "You must have 2-4 bunnies."
-                }
-            },
-            "range" : {
-                "min" : 2,
-                "max" : 4,
-                "messages" : {
-                    "default" : "You must have 2-4 bunnies."
-                }
-            }
-        }
-    },
     "password" : {
         "validators" : {
             "required" : {
@@ -102,17 +79,41 @@
             "raw" : {}
         }    
     },
-    "beard" : {
-        "default" : "pointy",
+    "passwordc" : {
         "validators" : {
             "required" : {
                 "messages" : {
-                    "default" : "'You must select a beard."
+                    "default" : "'Confirm password' is required.",
+                    "es_US" : "Por favor, ingrese su contraseña"
+                }
+            },
+            "matches" : {
+                "field" : "password",
+                "messages" : {
+                    "default" : "Your password and confirmation password must match.",
+                    "es_US" : "Su contraseña y confirmación de contraseña debe coincidir"
+                }
+            },
+            "length" : {
+                "min" : 8,
+                "max" : 50,
+                "messages" : {
+                    "default" : "'Confirm password' must be between 8 and 50 characters long.",
+                    "es_US" : "La contraseña debe tener entre 8 y 50 caracteres de longitud"
                 }
             }
         },
         "sanitizers" : {
-            "escape" : {}
+            "raw" : {}
+        }    
+    },
+    "captcha" : {
+        "validators" : {
+            "required" : {
+                "messages" : {
+                    "default" : "Please enter the captcha code."
+                }
+            }
         }
     }
 }

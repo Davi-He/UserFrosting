@@ -99,6 +99,18 @@
         $(document).ready(function() {            
           alertWidget('display-alerts');
           // Process form     
+          $("form[name='register']").formValidation({
+            framework: 'bootstrap',
+            // Feedback icons
+            icon: {
+                valid: 'fa fa-check',
+                invalid: 'fa fa-times',
+                validating: 'fa fa-refresh'
+            },
+            fields: {{validators | raw}}
+          });
+          
+          // Process form     
           $("form[name='register']").submit(function(e){
             // Prevent form from submitting twice
             e.preventDefault();
