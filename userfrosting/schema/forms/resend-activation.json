@@ -1,0 +1,21 @@
+{
+    "user_name" : {
+        "validators" : {
+            "required" : {
+                "messages" : {
+                    "default" : "'User name' is required.",
+                    "es_US" : "Por favor, ingrese su nombre de usuario"
+                }
+            }
+        }
+    },  
+    "email" : {
+        "validators" : {
+            "required" : {
+                "messages" : {
+                    "default" : "You must specify an email address."
+                }
+            }
+        }
+    }
+}

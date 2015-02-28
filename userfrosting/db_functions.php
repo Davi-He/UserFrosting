@@ -47,7 +47,7 @@ function isUserLoggedIn() {
 		return false;//if $loggedInUser is null, we don't need to check the database. KISS
 	}else{
         try {
-            $db = pdoConnect();
+            global $PDO_DB;
             
             $sqlVars = array();        
         
@@ -62,7 +62,7 @@ function isUserLoggedIn() {
                 AND
                 active = 1
                 LIMIT 1";
-            $stmt = $db->prepare($query);
+            $stmt = $PDO_DB->prepare($query);
             
             $sqlVars[':user_id'] = $loggedInUser->user_id;
             $sqlVars[':password'] = $loggedInUser->hash_pw;
@@ -122,7 +122,7 @@ function valueExists($table, $column, $value) {
         
         $results = array();
         
-        $db = pdoConnect();
+        global $PDO_DB;
         
         $sqlVars = array();
         
@@ -134,7 +134,7 @@ function valueExists($table, $column, $value) {
         
         // This block allows return false if the table doesn't exist
         try {
-            $stmt = $db->prepare($query);
+            $stmt = $PDO_DB->prepare($query);
         } catch (PDOException $e) {    
             return false;
         }
@@ -174,7 +174,7 @@ function emailUsernameLinked($email,$user_name) {
         
         $results = array();
         
-        $db = pdoConnect();
+        global $PDO_DB;
         
         $sqlVars = array();
         
@@ -185,7 +185,7 @@ function emailUsernameLinked($email,$user_name) {
         email = :email
 		LIMIT 1";
         
-        $stmt = $db->prepare($query);
+        $stmt = $PDO_DB->prepare($query);
         
         $sqlVars[':user_name'] = $user_name;
         $sqlVars[':email'] = $email;
@@ -223,13 +223,13 @@ function fetchAllUsers($limit = null){
 
         $results = array();
 
-        $db = pdoConnect();
+        global $PDO_DB;
 
         $sqlVars = array();
 
         $query = "select {$db_table_prefix}users.id as user_id, user_name, display_name, email, title, sign_up_stamp, last_sign_in_stamp, active, enabled, primary_group_id from {$db_table_prefix}users";
 
-        $stmt = $db->prepare($query);
+        $stmt = $PDO_DB->prepare($query);
         $stmt->execute($sqlVars);
 
         if (!$limit){
@@ -262,7 +262,7 @@ function fetchUser($user_id){
       
       $results = array();
       
-      $db = pdoConnect();
+      global $PDO_DB;
       
       $sqlVars = array();
       
@@ -270,7 +270,7 @@ function fetchUser($user_id){
       
       $sqlVars[':user_id'] = $user_id;
       
-      $stmt = $db->prepare($query);
+      $stmt = $PDO_DB->prepare($query);
       $stmt->execute($sqlVars);
       
       if (!($results = $stmt->fetch(PDO::FETCH_ASSOC))){
@@ -296,7 +296,7 @@ function fetchUserDisplayName($user_id){
     try {
         global $db_table_prefix;
 
-        $db = pdoConnect();
+        global $PDO_DB;
 
         $sqlVars = array();
 
@@ -305,7 +305,7 @@ function fetchUserDisplayName($user_id){
             FROM ".$db_table_prefix."users
             WHERE `id` = :user_id";
 
-        $stmt = $db->prepare($query);
+        $stmt = $PDO_DB->prepare($query);
 
         $sqlVars[':user_id'] = $user_id;
 
@@ -353,7 +353,7 @@ function fetchUserAuth($column, $data){
         
         $results = array();
         
-        $db = pdoConnect();
+        global $PDO_DB;
         
         $sqlVars = array();
         
@@ -378,7 +378,7 @@ function fetchUserAuth($column, $data){
             $column = :data
             LIMIT 1";
             
-        $stmt = $db->prepare($query);
+        $stmt = $PDO_DB->prepare($query);
         
         $sqlVars[':data'] = $data;
         
@@ -420,7 +420,7 @@ function fetchMenu($user_id){
     try {
         global $db_table_prefix;
 
-        $db = pdoConnect();
+        global $PDO_DB;
         
         $results = array();
 
@@ -433,7 +433,7 @@ function fetchMenu($user_id){
             JOIN ".$db_table_prefix."nav_group_matches as m ON (n.id = m.menu_id)
             WHERE m.group_id IN $group_list ORDER BY n.position";
 
-        $stmt = $db->prepare($query);
+        $stmt = $PDO_DB->prepare($query);
 
         $stmt->execute();
 
@@ -460,7 +460,7 @@ function gatherSubMenuItems($pid){
     try {
         global $db_table_prefix;
 
-        $db = pdoConnect();
+        global $PDO_DB;
 
         $sqlVars = array();
 
@@ -468,7 +468,7 @@ function gatherSubMenuItems($pid){
 
         $query = "SELECT * FROM ".$db_table_prefix."nav WHERE parent_id = :parent_id  ORDER BY position";
 
-        $stmt = $db->prepare($query);
+        $stmt = $PDO_DB->prepare($query);
 
         $sqlVars[':parent_id'] = $pid;
 
@@ -498,7 +498,7 @@ function fetchUserPrimaryGroup($user_id){
    try {
         global $db_table_prefix;
         
-        $db = pdoConnect();
+        global $PDO_DB;
         
         $sqlVars = array();
         
@@ -506,7 +506,7 @@ function fetchUserPrimaryGroup($user_id){
             FROM ".$db_table_prefix."users,".$db_table_prefix."groups
             WHERE ".$db_table_prefix."users.id = :user_id and ".$db_table_prefix."users.primary_group_id = ".$db_table_prefix."groups.id LIMIT 1";
         
-        $stmt = $db->prepare($query);  
+        $stmt = $PDO_DB->prepare($query);  
 
         $sqlVars[":user_id"] = $user_id;
         
@@ -542,7 +542,7 @@ function fetchUserHomePage($user_id){
    try {
         global $db_table_prefix;
         
-        $db = pdoConnect();
+        global $PDO_DB;
         
         $sqlVars = array();
         
@@ -551,7 +551,7 @@ function fetchUserHomePage($user_id){
             WHERE ".$db_table_prefix."users.id = :user_id and ".$db_table_prefix."users.primary_group_id = ".$db_table_prefix."groups.id and ".
             $db_table_prefix."groups.home_page_id = ".$db_table_prefix."pages.id LIMIT 1";
         
-        $stmt = $db->prepare($query);  
+        $stmt = $PDO_DB->prepare($query);  
 
         $sqlVars[":user_id"] = $user_id;
         
@@ -592,7 +592,7 @@ function activateUserById($user_id){
     try {
         global $db_table_prefix;
 
-        $db = pdoConnect();
+        global $PDO_DB;
 
         $sqlVars = array();
 
@@ -602,7 +602,7 @@ function activateUserById($user_id){
             id = :user_id
             LIMIT 1";
 
-        $stmt = $db->prepare($query);
+        $stmt = $PDO_DB->prepare($query);
         $sqlVars[':user_id'] = $user_id;
         $stmt->execute($sqlVars);
         
@@ -635,7 +635,7 @@ function setUserActive($token) {
         
         $results = array();
         
-        $db = pdoConnect();
+        global $PDO_DB;
         
         $sqlVars = array();
 
@@ -645,7 +645,7 @@ function setUserActive($token) {
             activation_token = :token
             LIMIT 1";
         
-        $stmt = $db->prepare($query);
+        $stmt = $PDO_DB->prepare($query);
         
         $sqlVars[':token'] = $token;
 
@@ -677,7 +677,7 @@ function validateActivationToken($token) {
         
         $results = array();
         
-        $db = pdoConnect();
+        global $PDO_DB;
         
         $sqlVars = array();
         
@@ -688,7 +688,7 @@ function validateActivationToken($token) {
 			activation_token = :token
 			LIMIT 1";
   
-        $stmt = $db->prepare($query);
+        $stmt = $PDO_DB->prepare($query);
         
         $sqlVars[':token'] = $token;
 
@@ -728,7 +728,7 @@ function updateLastActivationRequest($new_activation_token,$user_name,$email) {
     try {
         global $db_table_prefix;
         
-        $db = pdoConnect();
+        global $PDO_DB;
         
         $sqlVars = array();
         $query = "UPDATE ".$db_table_prefix."users
@@ -739,7 +739,7 @@ function updateLastActivationRequest($new_activation_token,$user_name,$email) {
             AND
             user_name = :user_name";
     
-        $stmt = $db->prepare($query);
+        $stmt = $PDO_DB->prepare($query);
         
         $sqlVars['token'] = $new_activation_token;
         $sqlVars['time'] = time();
@@ -775,7 +775,7 @@ function validateLostPasswordToken($token) {
     try {
         global $db_table_prefix;
         
-        $db = pdoConnect();
+        global $PDO_DB;
         
         $sqlVars = array();
         
@@ -788,7 +788,7 @@ function validateLostPasswordToken($token) {
 			lost_password_request = 1 
 			LIMIT 1";
 
-        $stmt = $db->prepare($query);
+        $stmt = $PDO_DB->prepare($query);
         
         $sqlVars[':token'] = $token;
 
@@ -827,7 +827,7 @@ function flagLostPasswordRequest($user_name, $value) {
     try {
         global $db_table_prefix;
         
-        $db = pdoConnect();
+        global $PDO_DB;
         
         $sqlVars = array();
         
@@ -837,7 +837,7 @@ function flagLostPasswordRequest($user_name, $value) {
 		user_name = :user_name
 		LIMIT 1";
         
-        $stmt = $db->prepare($query);
+        $stmt = $PDO_DB->prepare($query);
         
 	    $sqlVars['value'] = $value;
         $sqlVars['user_name'] = $user_name;
@@ -874,7 +874,7 @@ function updatePasswordFromToken($password, $current_token) {
     try {
         global $db_table_prefix;
         
-        $db = pdoConnect();
+        global $PDO_DB;
         
         $sqlVars = array();
 
@@ -884,7 +884,7 @@ function updatePasswordFromToken($password, $current_token) {
             WHERE
             activation_token = :current_token";
         
-		$stmt = $db->prepare($query);
+		$stmt = $PDO_DB->prepare($query);
         
 	    $sqlVars[':password'] = $password;
         $sqlVars[':new_token'] = generateActivationToken();
@@ -918,7 +918,7 @@ function addUser($user_name, $display_name, $title, $password, $email, $active, 
     try {
         global $db_table_prefix;
         
-        $db = pdoConnect();
+        global $PDO_DB;
             
         $query = "INSERT INTO ".$db_table_prefix."users (
             user_name,
@@ -959,14 +959,14 @@ function addUser($user_name, $display_name, $title, $password, $email, $active, 
             ':activation_token' => $activation_token
         );
     
-        $stmt = $db->prepare($query);
+        $stmt = $PDO_DB->prepare($query);
     
         if (!$stmt->execute($sqlVars)){
             // Error: column does not exist
             return false;
         }
         
-        $inserted_id = $db->lastInsertId();
+        $inserted_id = $PDO_DB->lastInsertId();
         
         $stmt = null;
     
@@ -992,7 +992,7 @@ function updateUserField($user_id, $field_name, $field_value){
     try {
         global $db_table_prefix;
         
-        $db = pdoConnect();
+        global $PDO_DB;
         
         $sqlVars = array();
 
@@ -1009,7 +1009,7 @@ function updateUserField($user_id, $field_name, $field_value){
 			WHERE
 			id = :user_id";
         
-        $stmt = $db->prepare($query);
+        $stmt = $PDO_DB->prepare($query);
         
         $sqlVars[':user_id'] = $user_id;
         $sqlVars[':field_value'] = $field_value;
@@ -1035,7 +1035,7 @@ function removeUser($user_id){
     try {
       global $db_table_prefix;
       
-      $db = pdoConnect();
+      global $PDO_DB;
       
       $sqlVars = array();
       
@@ -1043,7 +1043,7 @@ function removeUser($user_id){
       
       $query_user = "DELETE FROM ".$db_table_prefix."users WHERE id = :user_id";
       
-      $stmt_user = $db->prepare($query_user);
+      $stmt_user = $PDO_DB->prepare($query_user);
       
       if (!($stmt_user->execute($sqlVars))){
           addAlert("danger", "Invalid user id specified");
@@ -1052,14 +1052,14 @@ function removeUser($user_id){
       
       $query_groups = "DELETE FROM ".$db_table_prefix."user_group_matches WHERE user_id = :user_id";
       
-      $stmt_groups = $db->prepare($query_groups);
+      $stmt_groups = $PDO_DB->prepare($query_groups);
       $stmt_groups->execute($sqlVars);
       
       $stmt_groups = null;      
       
       $query_perms = "DELETE FROM ".$db_table_prefix."user_action_permits WHERE user_id = :user_id";
             
-      $stmt_perms = $db->prepare($query_perms);
+      $stmt_perms = $PDO_DB->prepare($query_perms);
       $stmt_perms->execute($sqlVars);
       
       $stmt_perms = null;
@@ -1102,7 +1102,7 @@ function fetchAllGroups() {
         
         $results = array();
         
-        $db = pdoConnect();
+        global $PDO_DB;
         
         $sqlVars = array();
 
@@ -1114,7 +1114,7 @@ function fetchAllGroups() {
             home_page_id 
             FROM ".$db_table_prefix."groups"; 
         
-        $stmt = $db->prepare($query);
+        $stmt = $PDO_DB->prepare($query);
 
         if (!$stmt->execute($sqlVars)){
             // Error
@@ -1144,7 +1144,7 @@ function fetchGroupDetails($group_id) {
     try {
         global $db_table_prefix;
         
-        $db = pdoConnect();
+        global $PDO_DB;
         
         $sqlVars = array();
 
@@ -1159,7 +1159,7 @@ function fetchGroupDetails($group_id) {
             id = :group_id
             LIMIT 1";
 	
-        $stmt = $db->prepare($query);
+        $stmt = $PDO_DB->prepare($query);
 
         $sqlVars[':group_id'] = $group_id;
         
@@ -1190,7 +1190,7 @@ function fetchDefaultPrimaryGroup(){
     try {
         global $db_table_prefix;
         
-        $db = pdoConnect();
+        global $PDO_DB;
 
         $query = "SELECT 
             id,
@@ -1203,7 +1203,7 @@ function fetchDefaultPrimaryGroup(){
             is_default = '2' 
             LIMIT 1";
 	
-        $stmt = $db->prepare($query);
+        $stmt = $PDO_DB->prepare($query);
         
         if (!$stmt->execute()){
             // Error
@@ -1230,7 +1230,7 @@ function fetchDefaultPrimaryGroup(){
 // Create a new group with the specified name, is_default, and home_page_id parameters
 function dbCreateGroup($name, $is_default, $can_delete, $home_page_id){
    try {
-        $db = pdoConnect();
+        global $PDO_DB;
         global $db_table_prefix;
         
         $query = "INSERT INTO ".$db_table_prefix."groups (
@@ -1240,7 +1240,7 @@ function dbCreateGroup($name, $is_default, $can_delete, $home_page_id){
 		:name, :is_default, :can_delete, :home_page_id
 		)";
         
-        $stmt = $db->prepare($query);
+        $stmt = $PDO_DB->prepare($query);
         
         $sqlVars = array(
             ':name' => $name,
@@ -1278,20 +1278,20 @@ function dbUpdateGroup($group_id, $name, $is_default, $home_page_id){
 			return false;
 		}
 
-        $db = pdoConnect();
+        global $PDO_DB;
         
         global $db_table_prefix;
 
         // If this group is being set as the primary default group, then the current primary default group must be reset
         if ($is_default == '2'){
-			$stmt_reset = $db->prepare("UPDATE ".$db_table_prefix."groups
+			$stmt_reset = $PDO_DB->prepare("UPDATE ".$db_table_prefix."groups
             SET is_default = '1' 
             WHERE
             is_default = '2'");
 			$stmt_reset->execute();
 		}
 		
-		$stmt = $db->prepare("UPDATE ".$db_table_prefix."groups
+		$stmt = $PDO_DB->prepare("UPDATE ".$db_table_prefix."groups
             SET name = :name, is_default = :is_default, home_page_id = :home_page_id 
             WHERE
             id = :group_id
@@ -1319,7 +1319,7 @@ function dbUpdateGroup($group_id, $name, $is_default, $home_page_id){
 function dbDeleteGroup($group_id){
     try {
 
-        $db = pdoConnect();
+        global $PDO_DB;
         global $db_table_prefix;
         
         $groupDetails = fetchGroupDetails($group_id);
@@ -1329,16 +1329,16 @@ function dbDeleteGroup($group_id){
             return false;
         }
 	
-        $stmt = $db->prepare("DELETE FROM ".$db_table_prefix."groups 
+        $stmt = $PDO_DB->prepare("DELETE FROM ".$db_table_prefix."groups 
             WHERE id = :group_id");
         
-        $stmt2 = $db->prepare("DELETE FROM ".$db_table_prefix."user_group_matches 
+        $stmt2 = $PDO_DB->prepare("DELETE FROM ".$db_table_prefix."user_group_matches 
             WHERE group_id = :group_id");
         
-        $stmt3 = $db->prepare("DELETE FROM ".$db_table_prefix."group_page_matches 
+        $stmt3 = $PDO_DB->prepare("DELETE FROM ".$db_table_prefix."group_page_matches 
             WHERE group_id = :group_id");
 
-        $stmt4 = $db->prepare("DELETE FROM ".$db_table_prefix."group_action_permits 
+        $stmt4 = $PDO_DB->prepare("DELETE FROM ".$db_table_prefix."group_action_permits 
             WHERE group_id = :group_id");        
                 
         $sqlVars = array(":group_id" => $group_id);
@@ -1373,7 +1373,7 @@ function userInGroup($user_id, $group_id){
     try {
         global $db_table_prefix;
         
-        $db = pdoConnect();
+        global $PDO_DB;
         
         $sqlVars = array();
 
@@ -1384,7 +1384,7 @@ function userInGroup($user_id, $group_id){
 			LIMIT 1
 			";
         
-        $stmt = $db->prepare($query);
+        $stmt = $PDO_DB->prepare($query);
         
         $sqlVars[':user_id'] = $user_id;
         $sqlVars[':group_id'] = $group_id;
@@ -1417,7 +1417,7 @@ function fetchUserGroups($user_id) {
         
         $results = array();
         
-        $db = pdoConnect();
+        global $PDO_DB;
         
         $sqlVars = array();
         
@@ -1426,7 +1426,7 @@ function fetchUserGroups($user_id) {
             WHERE user_id = :user_id and ".$db_table_prefix."user_group_matches.group_id = ".$db_table_prefix."groups.id
             ";
         
-        $stmt = $db->prepare($query);    
+        $stmt = $PDO_DB->prepare($query);    
 
         $sqlVars[':user_id'] = $user_id;
         
@@ -1460,7 +1460,7 @@ function fetchGroupUsers($group_id) {
         
         $results = array();
         
-        $db = pdoConnect();
+        global $PDO_DB;
         
         $sqlVars = array();
         
@@ -1470,7 +1470,7 @@ function fetchGroupUsers($group_id) {
             WHERE group_id = :group_id and ".$db_table_prefix."user_group_matches.user_id = ".$db_table_prefix."users.id
             ";
         
-        $stmt = $db->prepare($query);    
+        $stmt = $PDO_DB->prepare($query);    
 
         $sqlVars[':group_id'] = $group_id;
         
@@ -1502,13 +1502,13 @@ function dbAddUserToDefaultGroups($user_id){
     try {
         global $db_table_prefix;
         
-        $db = pdoConnect();
+        global $PDO_DB;
 
         $query = "SELECT 
             id, is_default 
             FROM ".$db_table_prefix."groups where is_default >= 1"; 
         
-        $stmt = $db->prepare($query);
+        $stmt = $PDO_DB->prepare($query);
 
         if (!$stmt->execute()){
             // Error
@@ -1525,7 +1525,7 @@ function dbAddUserToDefaultGroups($user_id){
 		:user_id
 		)";			
         
-        $stmt_user = $db->prepare($query_user);
+        $stmt_user = $PDO_DB->prepare($query_user);
         
         $primary_group_id = null;
         // Insert match for each default group
@@ -1568,7 +1568,7 @@ function dbAddUserToGroups($user_id, $group_ids) {
         
         $results = array();
         
-        $db = pdoConnect();
+        global $PDO_DB;
         
         $query = "INSERT INTO ".$db_table_prefix."user_group_matches (
 		group_id,
@@ -1579,7 +1579,7 @@ function dbAddUserToGroups($user_id, $group_ids) {
 		:user_id
 		)";
         
-        $stmt = $db->prepare($query);
+        $stmt = $PDO_DB->prepare($query);
         
         $i = 0;
         
@@ -1613,13 +1613,13 @@ function dbRemoveUserFromGroups($user_id, $group_ids) {
         
         $results = array();
         
-        $db = pdoConnect();
+        global $PDO_DB;
         
         $query = "DELETE FROM ".$db_table_prefix."user_group_matches 
 		WHERE group_id = :group_id
 		AND user_id = :user_id";
         
-        $stmt = $db->prepare($query);
+        $stmt = $PDO_DB->prepare($query);
         
         $i = 0;
         
@@ -1666,12 +1666,12 @@ function fetchConfigParameter($name){
         
         $results = array();
         
-        $db = pdoConnect();
+        global $PDO_DB;
         
         $query = "SELECT id, value
 		FROM ".$db_table_prefix."configuration WHERE name = :name";	
         
-        if (!$stmt = $db->prepare($query))
+        if (!$stmt = $PDO_DB->prepare($query))
             return false;
 
         $sqlVars[":name"] = $name;
@@ -1707,12 +1707,12 @@ function fetchConfigParameters(){
         
         $results = array();
         
-        $db = pdoConnect();
+        global $PDO_DB;
         
         $query = "SELECT id, name, value
         FROM ".$db_table_prefix."configuration";
         
-        $stmt = $db->prepare($query);    
+        $stmt = $PDO_DB->prepare($query);    
         
         if (!$stmt->execute()){
             // Error
@@ -1745,11 +1745,11 @@ function fetchConfigParametersPlugins(){
 
         $results = array();
 
-        $db = pdoConnect();
+        global $PDO_DB;
 
         $query = "SELECT id, name, value, `binary`, `variable` FROM ".$db_table_prefix."plugin_configuration";
 
-        $stmt = $db->prepare($query);
+        $stmt = $PDO_DB->prepare($query);
 
         if (!$stmt->execute()){
             // Error
@@ -1782,7 +1782,7 @@ function updateConfig($settings) {
         
         $results = array();
         
-        $db = pdoConnect();
+        global $PDO_DB;
         
         $query = "UPDATE ".$db_table_prefix."configuration
             SET 
@@ -1790,7 +1790,7 @@ function updateConfig($settings) {
             WHERE
             name = :name";
         
-        $stmt = $db->prepare($query);    
+        $stmt = $PDO_DB->prepare($query);    
         
         foreach ($settings as $name => $value){
             $sqlVars = array(':name' => $name, ':value' => $value);
@@ -1816,11 +1816,11 @@ function checkBinaryConfig($name){
 
         $results = array();
 
-        $db = pdoConnect();
+        global $PDO_DB;
 
         $query = "SELECT `binary`, `value` FROM ".$db_table_prefix."plugin_configuration WHERE name = :name AND `binary` = 1";
 
-        $stmt = $db->prepare($query);
+        $stmt = $PDO_DB->prepare($query);
 
         $sqlVars = array(':name' => $name);
 
@@ -1855,7 +1855,7 @@ function updatePluginConfig($name, $value) {
 
         $results = array();
 
-        $db = pdoConnect();
+        global $PDO_DB;
 
         $query = "UPDATE ".$db_table_prefix."plugin_configuration
             SET
@@ -1863,7 +1863,7 @@ function updatePluginConfig($name, $value) {
             WHERE
             name = :name";
 
-        $stmt = $db->prepare($query);
+        $stmt = $PDO_DB->prepare($query);
 
         $sqlVars = array(':name' => $name, ':value' => $value);
         $stmt->execute($sqlVars);
@@ -1887,12 +1887,12 @@ function deleteConfigParameter($name){
         
         $results = array();
         
-        $db = pdoConnect();
+        global $PDO_DB;
         
         $query = "DELETE
 		FROM ".$db_table_prefix."configuration WHERE name = :name";	
 	
-        if (!$stmt = $db->prepare($query))
+        if (!$stmt = $PDO_DB->prepare($query))
             return false;
 
         $sqlVars[":name"] = $name;
@@ -1933,14 +1933,14 @@ function fetchFileList() {
 
         $results = array();
 
-        $db = pdoConnect();
+        global $PDO_DB;
 
         $query = "SELECT
             id,
             path
             FROM ".$db_table_prefix."filelist";
 
-        $stmt = $db->prepare($query);
+        $stmt = $PDO_DB->prepare($query);
 
         if (!$stmt->execute()){
             // Error
@@ -1971,7 +1971,7 @@ function fetchAllPages() {
         
         $results = array();
         
-        $db = pdoConnect();
+        global $PDO_DB;
         
         $query = "SELECT 
             id,
@@ -1979,7 +1979,7 @@ function fetchAllPages() {
             private
             FROM ".$db_table_prefix."pages";
         
-        $stmt = $db->prepare($query);
+        $stmt = $PDO_DB->prepare($query);
 
         if (!$stmt->execute()){
             // Error
@@ -2008,7 +2008,7 @@ function fetchPageDetails($page_id) {
     try {
         global $db_table_prefix;
         
-        $db = pdoConnect();
+        global $PDO_DB;
         
         $sqlVars = array();
         
@@ -2021,7 +2021,7 @@ function fetchPageDetails($page_id) {
             id = :page_id
             LIMIT 1";
         
-        $stmt = $db->prepare($query);
+        $stmt = $PDO_DB->prepare($query);
 
         $sqlVars[":page_id"] = $page_id;
         
@@ -2053,7 +2053,7 @@ function fetchPageDetailsByName($name){
     try {
         global $db_table_prefix;
         
-        $db = pdoConnect();
+        global $PDO_DB;
         
         $sqlVars = array();
         
@@ -2066,7 +2066,7 @@ function fetchPageDetailsByName($name){
             page = :name
             LIMIT 1";
         
-        $stmt = $db->prepare($query);
+        $stmt = $PDO_DB->prepare($query);
 
         $sqlVars[":name"] = $name;
         
@@ -2099,7 +2099,7 @@ function createPages($pages) {
     try {
         global $db_table_prefix;
         
-        $db = pdoConnect();
+        global $PDO_DB;
         
         $query = "INSERT INTO ".$db_table_prefix."pages (
 		page
@@ -2108,7 +2108,7 @@ function createPages($pages) {
 		:page
 		)";
         
-        $stmt = $db->prepare($query);    
+        $stmt = $PDO_DB->prepare($query);    
         
         foreach ($pages as $page){
             $sqlVars = array(':page' => $page);
@@ -2142,7 +2142,7 @@ function updatePrivate($page_id, $private) {
 		
 		global $db_table_prefix;
         
-        $db = pdoConnect();
+        global $PDO_DB;
         
         $sqlVars = array();
         
@@ -2152,7 +2152,7 @@ function updatePrivate($page_id, $private) {
 		WHERE
 		id = :page_id";
         
-        $stmt = $db->prepare($query);
+        $stmt = $PDO_DB->prepare($query);
         
         $sqlVars[':private'] = $private;
         $sqlVars[':page_id'] = $page_id;
@@ -2178,13 +2178,13 @@ function deletePages($pages) {
     try {
         global $db_table_prefix;
         
-        $db = pdoConnect();
+        global $PDO_DB;
         
-        $stmt = $db->prepare("DELETE FROM ".$db_table_prefix."pages 
+        $stmt = $PDO_DB->prepare("DELETE FROM ".$db_table_prefix."pages 
 		WHERE id = :page_id");
         
         
-        $stmt2 = $db->prepare("DELETE FROM ".$db_table_prefix."group_page_matches 
+        $stmt2 = $PDO_DB->prepare("DELETE FROM ".$db_table_prefix."group_page_matches 
 		WHERE page_id = :page_id");
         
         foreach($pages as $id){
@@ -2217,7 +2217,7 @@ function userPageMatchExists($user_id, $page_id){
    try {
         global $db_table_prefix;
         
-        $db = pdoConnect();
+        global $PDO_DB;
         
         $sqlVars = array();
         
@@ -2227,7 +2227,7 @@ function userPageMatchExists($user_id, $page_id){
                     $db_table_prefix."user_group_matches.group_id = ".$db_table_prefix."group_page_matches.group_id and ".
                     $db_table_prefix."group_page_matches.page_id = :page_id LIMIT 1";
         
-        $stmt = $db->prepare($query);  
+        $stmt = $PDO_DB->prepare($query);  
 
         $sqlVars[":user_id"] = $user_id;
         $sqlVars[":page_id"] = $page_id;
@@ -2262,7 +2262,7 @@ function fetchPageGroups($page_id) {
         
         $results = array();
         
-        $db = pdoConnect();
+        global $PDO_DB;
         
         $sqlVars = array();
         
@@ -2272,7 +2272,7 @@ function fetchPageGroups($page_id) {
             FROM ".$db_table_prefix."group_page_matches
             WHERE page_id = :page_id
             ";
-        $stmt = $db->prepare($query);
+        $stmt = $PDO_DB->prepare($query);
     
         $sqlVars[':page_id'] = $page_id;
     
@@ -2305,7 +2305,7 @@ function fetchGroupPages($group_id) {
         
         $results = array();
         
-        $db = pdoConnect();
+        global $PDO_DB;
         
         $sqlVars = array();
         
@@ -2316,7 +2316,7 @@ function fetchGroupPages($group_id) {
 		WHERE group_id = :group_id
 		";
         
-        $stmt = $db->prepare($query);
+        $stmt = $PDO_DB->prepare($query);
     
         $sqlVars[':page_id'] = $page_id;
     
@@ -2347,7 +2347,7 @@ function addPage($page_ids, $group_id) {
    try {
         global $db_table_prefix;
         
-        $db = pdoConnect();
+        global $PDO_DB;
         
         $i = 0;
         $query = "INSERT INTO ".$db_table_prefix."group_page_matches (
@@ -2359,7 +2359,7 @@ function addPage($page_ids, $group_id) {
             :page_id
             )";
     
-        $stmt = $db->prepare($query);
+        $stmt = $PDO_DB->prepare($query);
         
         if (is_array($page_ids)){
             foreach($page_ids as $id){
@@ -2389,14 +2389,14 @@ function removePage($page_ids, $group_id) {
    try {
         global $db_table_prefix;
         
-        $db = pdoConnect();
+        global $PDO_DB;
         
         $i = 0;
         $query = "DELETE FROM ".$db_table_prefix."group_page_matches 
 		WHERE page_id = :page_id
 		AND group_id = :group_id";
         
-        $stmt = $db->prepare($query);
+        $stmt = $PDO_DB->prepare($query);
         
         if (is_array($page_ids)){
             foreach($page_ids as $id){
@@ -2426,7 +2426,7 @@ function fetchActionPermit($action_id, $type) {
     try {
         global $db_table_prefix;
           
-        $db = pdoConnect();
+        global $PDO_DB;
           
         $sqlVars = array();
          
@@ -2443,7 +2443,7 @@ function fetchActionPermit($action_id, $type) {
 		
         $sqlVars[':action_id'] = $action_id;
         
-        $stmt = $db->prepare($query);
+        $stmt = $PDO_DB->prepare($query);
         $stmt->execute($sqlVars);
         
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -2471,7 +2471,7 @@ function fetchUserPermits($user_id, $action_function = null) {
           
         $action_permits = array();
           
-        $db = pdoConnect();
+        global $PDO_DB;
           
         $sqlVars = array();
           
@@ -2483,7 +2483,7 @@ function fetchUserPermits($user_id, $action_function = null) {
 		}
         $sqlVars[':user_id'] = $user_id;
         
-        $stmt = $db->prepare($query);
+        $stmt = $PDO_DB->prepare($query);
         $stmt->execute($sqlVars);
         
         while ($r = $stmt->fetch(PDO::FETCH_ASSOC)) {
@@ -2510,7 +2510,7 @@ function fetchGroupPermits($group_id, $action_function = null) {
           
         $action_permits = array();
           
-        $db = pdoConnect();
+        global $PDO_DB;
           
         $sqlVars = array();
           
@@ -2522,7 +2522,7 @@ function fetchGroupPermits($group_id, $action_function = null) {
 		}
         $sqlVars[':group_id'] = $group_id;
         
-        $stmt = $db->prepare($query);
+        $stmt = $PDO_DB->prepare($query);
         $stmt->execute($sqlVars);
         
         while ($r = $stmt->fetch(PDO::FETCH_ASSOC)) {
@@ -2569,7 +2569,7 @@ function fetchAllPermits($type) {
 			}
 		}
 		
-        $db = pdoConnect();
+        global $PDO_DB;
 
         if ($type == "user"){
             $query = "SELECT {$db_table_prefix}user_action_permits.*, user_name FROM  {$db_table_prefix}users, {$db_table_prefix}user_action_permits
@@ -2581,7 +2581,7 @@ function fetchAllPermits($type) {
             return false;
         }  
         
-        $stmt = $db->prepare($query);
+        $stmt = $PDO_DB->prepare($query);
         $stmt->execute();
         
         while ($r = $stmt->fetch(PDO::FETCH_ASSOC)) {
@@ -2645,7 +2645,7 @@ function actionPermitExists($action_id, $type){
     try {
     
         global $db_table_prefix;
-        $db = pdoConnect();
+        global $PDO_DB;
 
         $table = "";
         if ($type == "user"){
@@ -2662,7 +2662,7 @@ function actionPermitExists($action_id, $type){
 		id = :action_id
 		LIMIT 1";
         
-        $stmt = $db->prepare($query);
+        $stmt = $PDO_DB->prepare($query);
         
         $sqlVars[':action_id'] = $action_id;
 
@@ -2692,7 +2692,7 @@ function dbCreateActionPermit($owner_id, $action, $permits, $type) {
    try {
         global $db_table_prefix;
         
-        $db = pdoConnect();
+        global $PDO_DB;
         
         $table = "";
         if ($type == "user"){
@@ -2716,7 +2716,7 @@ function dbCreateActionPermit($owner_id, $action, $permits, $type) {
             :permits
             )";
     
-        $stmt = $db->prepare($query);
+        $stmt = $PDO_DB->prepare($query);
         
         $sqlVars = array(
             ':id' => $owner_id,
@@ -2748,7 +2748,7 @@ function dbUpdateActionPermit($action_id, $permits, $type){
     try {
     
         global $db_table_prefix;
-        $db = pdoConnect();
+        global $PDO_DB;
 
         $table = "";
         if ($type == "user"){
@@ -2766,7 +2766,7 @@ function dbUpdateActionPermit($action_id, $permits, $type){
             return false;
         }
         
-        $stmt = $db->prepare("UPDATE ".$db_table_prefix.$table.
+        $stmt = $PDO_DB->prepare("UPDATE ".$db_table_prefix.$table.
             " SET permits = :permits
             WHERE 
             id = :action_id
@@ -2792,7 +2792,7 @@ function dbDeleteActionPermit($action_id, $type){
    try {
         global $db_table_prefix;
         
-        $db = pdoConnect();
+        global $PDO_DB;
         
         $table = "";
         if ($type == "user"){
@@ -2806,7 +2806,7 @@ function dbDeleteActionPermit($action_id, $type){
         $query = "DELETE FROM ".$db_table_prefix.$table.
 		" WHERE id = :action_id";
         
-        $stmt = $db->prepare($query);
+        $stmt = $PDO_DB->prepare($query);
         
         $sqlVars = array(':action_id' => $action_id);
         $stmt->execute($sqlVars);

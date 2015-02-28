@@ -1,9 +1,9 @@
 <?php
 /*
 
-UserFrosting Version: 0.2.2
+UserFrosting Version: 0.3.0
 By Alex Weissman
-Copyright (c) 2014
+Copyright (c) 2015
 
 Based on the UserCake user management system, v2.0.2.
 Copyright (c) 2009-2012
@@ -29,7 +29,7 @@ THE SOFTWARE.
 
 */
 
-// namespace UserFrosting;
+namespace UserFrosting;
 
 // Used to force backend scripts to log errors rather than print them as output
 function logAllErrors($errno, $errstr, $errfile, $errline, array $errcontext) {
@@ -41,54 +41,60 @@ function logAllErrors($errno, $errstr, $errfile, $errline, array $errcontext) {
 }
 
 // Set true for dev server, false for production server.  Allows for quickly switching back and forth between development and production modes.
-defined("Bootsole\SERVER_DEV")
-	or define("Bootsole\SERVER_DEV", true);
+defined("UserFrosting\SERVER_DEV")
+	or define("UserFrosting\SERVER_DEV", true);
 
 // Set true for running unminified/merged CSS, false to run minified CSS.  Don't forget to reminify your CSS!
-defined("Bootsole\CSS_DEV")
-	or define("Bootsole\CSS_DEV", true);
+defined("UserFrosting\CSS_DEV")
+	or define("UserFrosting\CSS_DEV", true);
 
 // Set true for running unminified/merged JS, false to run minified JS.  Don't forget to reminify your JS!
-defined("Bootsole\JS_DEV")
-	or define("Bootsole\JS_DEV", true);
+defined("UserFrosting\JS_DEV")
+	or define("UserFrosting\JS_DEV", true);
   
 // Determine if this is SSL or unsecured connection
-if (!defined("SCHEME_PREFIX")){
+if (!defined("UserFrosting\SCHEME_PREFIX")){
     // Determine if connection is http or https
     if (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off') {
         // SSL connection
-        define("SCHEME_PREFIX", "https://");
+        define("UserFrosting\SCHEME_PREFIX", "https://");
     } else {
-        define("SCHEME_PREFIX", "http://");
+        define("UserFrosting\SCHEME_PREFIX", "http://");
     }
 }
 
-if (Bootsole\SERVER_DEV) {
+if (SERVER_DEV) {
     /*********** Dev configuration **********/
     $config = [
-
+    /*
         "db" => [
             "dbname"   => "userfrosting", //Name of Database
             "username" => "root", //Name of database user
             "password" => "password", //Password for database user
             "host" => "localhost"
         ]
-
+        */
+        "db" => [
+            "dbname"   => "uf4", //Name of Database
+            "username" => "userfrosting", //Name of database user
+            "password" => "XCUvP2z7peePCnQ2", //Password for database user
+            "host" => "localhost"
+        ]
     ];
     
     /********* Override these in config-bootsole.php *********/
 
     /* The public URI corresponding to the document root of your website **relative to the TLD**. */
-    defined("Bootsole\URI_PUBLIC_RELATIVE")
-        or define("Bootsole\URI_PUBLIC_RELATIVE", "/userfrosting/public/");    
+    defined("UserFrosting\URI_PUBLIC_RELATIVE")
+        or define("UserFrosting\URI_PUBLIC_RELATIVE", "/userfrosting/public/");    
         
     /* The public URI corresponding to the document root of your website. */
-    defined("Bootsole\URI_PUBLIC_ROOT")
-        or define("Bootsole\URI_PUBLIC_ROOT", SCHEME_PREFIX . "localhost/userfrosting/public/");
+    defined("UserFrosting\URI_PUBLIC_ROOT")
+        or define("UserFrosting\URI_PUBLIC_ROOT", SCHEME_PREFIX . "localhost/userfrosting/public/");
     
     /* The root directory of your public web assets (e.g. 'public', 'public_html', etc) */
-    defined("Bootsole\PATH_PUBLIC_ROOT")
-        or define ("Bootsole\PATH_PUBLIC_ROOT", realpath(dirname(__FILE__) . "/../public") . "/");
+    defined("UserFrosting\PATH_PUBLIC_ROOT")
+        or define ("UserFrosting\PATH_PUBLIC_ROOT", realpath(dirname(__FILE__) . "/../public") . "/");
             
 } else {
     /*********** Production configuration **********/
@@ -104,31 +110,36 @@ if (Bootsole\SERVER_DEV) {
     /********* Override these in config-bootsole.php *********/
 
     /* The public URI corresponding to the document root of your website **relative to the TLD**. */
-    defined("Bootsole\URI_PUBLIC_RELATIVE")
-        or define("Bootsole\URI_PUBLIC_RELATIVE", "/");
+    defined("UserFrosting\URI_PUBLIC_RELATIVE")
+        or define("UserFrosting\URI_PUBLIC_RELATIVE", "/");
         
     /* The public URI corresponding to the document root of your website. */
-    defined("Bootsole\URI_PUBLIC_ROOT")
-        or define("Bootsole\URI_PUBLIC_ROOT", SCHEME_PREFIX ."userfrosting.com/");
+    defined("UserFrosting\URI_PUBLIC_ROOT")
+        or define("UserFrosting\URI_PUBLIC_ROOT", SCHEME_PREFIX ."userfrosting.com/");
     
     /* The root directory of your public web assets (e.g. 'public', 'public_html', etc) */
-    defined("Bootsole\PATH_PUBLIC_ROOT")
-        or define ("Bootsole\PATH_PUBLIC_ROOT", realpath(dirname(__FILE__) . "/../public") . "/");
+    defined("UserFrosting\PATH_PUBLIC_ROOT")
+        or define ("UserFrosting\PATH_PUBLIC_ROOT", realpath(dirname(__FILE__) . "/../public") . "/");
             
 }
+
+/* The public URI corresponding to the Javascript assets of your website. */
+defined("UserFrosting\URI_JS_ROOT")
+    or define("UserFrosting\URI_JS_ROOT", URI_PUBLIC_ROOT . "js/");    
+
+/* The public URI corresponding to the CSS assets of your website. */
+defined("UserFrosting\URI_CSS_ROOT")
+    or define("UserFrosting\URI_CSS_ROOT", URI_PUBLIC_ROOT . "css/");
+    
 
 /* Establish DB connection */
 $db_table_prefix = "uf_";
 
-// All SQL queries use PDO now
-function pdoConnect(){
-	// Let this function throw a PDO exception if it cannot connect
-	global $config;
-	$db = new PDO("mysql:host={$config['db']['host']};dbname={$config['db']['dbname']};charset=utf8", $config['db']['username'], $config['db']['password']);
-	$db->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
-	$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-	return $db;
-}
+$PDO_DB = new \PDO("mysql:host={$config['db']['host']};dbname={$config['db']['dbname']};charset=utf8", $config['db']['username'], $config['db']['password']);
+$PDO_DB->setAttribute(\PDO::ATTR_EMULATE_PREPARES, false);
+$PDO_DB->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+
+global $PDO_DB;
 
 GLOBAL $errors;
 GLOBAL $successes;
@@ -138,34 +149,39 @@ $successes = array();
 
 /***** File (local) paths ******/
 
-/* The root directory of your public web assets (e.g. 'public', 'public_html', etc) */
-defined("Bootsole\PATH_PUBLIC_ROOT")
-	or define ("Bootsole\PATH_PUBLIC_ROOT", realpath(dirname(__FILE__) . "/../public") . "/");
-
 /* The root directory of your Javascript assets */    
-defined("Bootsole\PATH_JS_ROOT")
-	or define ("Bootsole\PATH_JS_ROOT", Bootsole\PATH_PUBLIC_ROOT . "js/");  
+defined("UserFrosting\PATH_JS_ROOT")
+	or define ("UserFrosting\PATH_JS_ROOT", PATH_PUBLIC_ROOT . "js/");  
 
 /* The root directory of your CSS assets */
-defined("Bootsole\PATH_CSS_ROOT")
-	or define ("Bootsole\PATH_CSS_ROOT", Bootsole\PATH_PUBLIC_ROOT . "css/");
+defined("UserFrosting\PATH_CSS_ROOT")
+	or define ("UserFrosting\PATH_CSS_ROOT", PATH_PUBLIC_ROOT . "css/");
     
 /* The root directory in which the UserFrosting resources reside.  Should usually be the same directory that this config file resides in.*/
-defined("PATH_UF_ROOT")
-    or define("PATH_UF_ROOT", realpath(dirname(__FILE__)) . "/");
+defined("Userfrosting\PATH_UF_ROOT")
+    or define("Userfrosting\PATH_UF_ROOT", realpath(dirname(__FILE__)) . "/");
 
-/* The root directory in which the Bootsole templates reside. */
-defined("Bootsole\PATH_TEMPLATES")
-    or define("Bootsole\PATH_TEMPLATES", PATH_UF_ROOT . "templates/");
+/* The root directory in which the UserFrosting templates reside. */
+defined("UserFrosting\PATH_TEMPLATES")
+    or define("UserFrosting\PATH_TEMPLATES", PATH_UF_ROOT . "templates/");
 
-/* The root directory in which the Bootsole schema reside. */
-defined("Bootsole\PATH_SCHEMA")
-    or define("Bootsole\PATH_SCHEMA", PATH_UF_ROOT . "schema/");
+/* The root directory in which the UserFrosting schema reside. */
+defined("UserFrosting\PATH_SCHEMA")
+    or define("UserFrosting\PATH_SCHEMA", PATH_UF_ROOT . "schema/");
 
 /* The default page schema (for determining CSS/JS includes in PageHeaderBuilder and PageFooterBuilder). */
-defined("Bootsole\FILE_SCHEMA_PAGE_DEFAULT")
-    or define("Bootsole\FILE_SCHEMA_PAGE_DEFAULT", Bootsole\PATH_SCHEMA . "pages/pages.json");
-    
+defined("UserFrosting\FILE_SCHEMA_PAGE_DEFAULT")
+    or define("UserFrosting\FILE_SCHEMA_PAGE_DEFAULT", PATH_SCHEMA . "pages/pages.json");
+
+/* Other constants */
+
+// Set to true if you want authorization failures to be logged to the PHP error log.
+defined("UserFrosting\LOG_AUTH_FAILURES")
+	or define("UserFrosting\LOG_AUTH_FAILURES", false);
+
+defined("UserFrosting\SESSION_NAME")
+    or define("UserFrosting\SESSION_NAME", "UserFrosting");
+   
 defined("MAIL_TEMPLATES")
 	or define("MAIL_TEMPLATES", PATH_UF_ROOT . "/mail-templates/");
 
@@ -174,12 +190,13 @@ require_once("error_functions.php");
 require_once("template_functions.php");
 require_once("password.php");
 require_once("db_functions.php");
+require_once("pageschema.php");
 require_once("../vendor/autoload.php");
 
 // Set validation parameters
 
-Valitron\Validator::langDir(__DIR__.'/validation/lang'); // always set langDir before lang.
-Valitron\Validator::lang('en');
+\Valitron\Validator::langDir(__DIR__.'/validation/lang'); // always set langDir before lang.
+\Valitron\Validator::lang('en');
 
 //Retrieve basic configuration settings
 
@@ -213,7 +230,7 @@ $token_timeout = $settings['token_timeout'];
 $version = $settings['version'];
 
 // Check for upgrade, do this hear for access to $version
-checkUpgrade($version, Bootsole\SERVER_DEV);
+checkUpgrade($version, SERVER_DEV);
 
 // Define paths here
 defined("SITE_ROOT")
@@ -221,10 +238,10 @@ defined("SITE_ROOT")
 
 defined("ACCOUNT_ROOT")
     or define("ACCOUNT_ROOT", SITE_ROOT . "account/");
-		
-defined("LOCAL_ROOT")
-	or define ("LOCAL_ROOT", realpath(dirname(__FILE__)."/.."));
 
+defined("UserFrosting\SITE_TITLE")
+    or define("UserFrosting\SITE_TITLE", $websiteName);
+    		
 // Include paths for files containing secure functions
 $files_secure_functions = array(
     dirname(__FILE__) . "/secure_functions.php"
@@ -232,21 +249,6 @@ $files_secure_functions = array(
 
 // Include paths for pages to add to site page management
 $page_include_paths = fetchFileList();
-
-// Other constants
-defined("ACCOUNT_HEAD_FILE")
-	or define("ACCOUNT_HEAD_FILE", "head-account.html");	
-
-// Set to true if you want authorization failures to be logged to the PHP error log.
-defined("LOG_AUTH_FAILURES")
-	or define("LOG_AUTH_FAILURES", false);
-
-defined("SESSION_NAME")
-    or define("SESSION_NAME", "UserFrosting");
-
-defined("SITE_TITLE")
-    or define("SITE_TITLE", $websiteName);
-
 	
 // This is the user id of the master (root) account.
 // The root user cannot be deleted, and automatically has permissions to everything regardless of group membership.
@@ -274,8 +276,8 @@ function getRelativeDocumentPath($localPath){
 	// Get lowercase version of path
 	$localPathLower = strtolower($localPath);
 
-	// Replace backslashes in local root (if we're in a windows environment)
-	$localRoot = str_replace('\\', '/', LOCAL_ROOT);	
+	// Replace backslashes in public root (if we're in a windows environment)
+	$localRoot = str_replace('\\', '/', PATH_PUBLIC_ROOT);	
 	
 	// Get lowercase version of path
 	$localRootLower = strtolower($localRoot) . "/";

@@ -4,54 +4,8 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "1e4fc0e38a71b3e8ebe472a3a02cb424",
+    "hash": "eebae0b6bfce12f0ea2875cabcab42a7",
     "packages": [
-        {
-            "name": "alexweissman/bootsole",
-            "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/alexweissman/bootsole.git",
-                "reference": "390754fe4ed02160cb502334391badfba6b703e6"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/alexweissman/bootsole/zipball/390754fe4ed02160cb502334391badfba6b703e6",
-                "reference": "390754fe4ed02160cb502334391badfba6b703e6",
-                "shasum": ""
-            },
-            "require": {
-                "alexweissman/fortress": "dev-master",
-                "php": ">=5.4.0"
-            },
-            "type": "library",
-            "autoload": {
-                "classmap": [
-                    "bootsole/htmlbuilder/"
-                ],
-                "files": [
-                    "bootsole/config-bootsole.php"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Alexander Weissman",
-                    "homepage": "http://alexanderweissman.com"
-                }
-            ],
-            "description": "A nestable, object-oriented templating engine for generating beautiful Bootstrap-themed pages, forms, tables, and other components in PHP.",
-            "homepage": "https://github.com/alexweissman/bootsole",
-            "keywords": [
-                "bootstrap forms",
-                "php forms",
-                "php templating"
-            ],
-            "time": "2015-02-09 19:32:13"
-        },
         {
             "name": "alexweissman/fortress",
             "version": "dev-master",
@@ -303,8 +257,7 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "alexweissman/fortress": 20,
-        "alexweissman/bootsole": 20
+        "alexweissman/fortress": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,

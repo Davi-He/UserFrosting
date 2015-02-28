@@ -31,8 +31,10 @@ THE SOFTWARE.
 
 require_once("../userfrosting/config-userfrosting.php");
 
+use \UserFrosting as UF;
+
 // Public page
-setReferralPage(getAbsoluteDocumentPath(__FILE__));
+setReferralPage(UF\getAbsoluteDocumentPath(__FILE__));
 
 //Forward the user to their default page if he/she is already logged in
 if(isUserLoggedIn()) {
@@ -41,34 +43,32 @@ if(isUserLoggedIn()) {
 	exit();
 }
 
-use \Bootsole as BS;
-
 // Load page schema
-$pageSchema = BS\PageSchema::load("default", BS\PATH_SCHEMA . "pages/pages.json");
+$pageSchema = UF\PageSchema::load("default", UF\PATH_SCHEMA . "pages/pages.json");
 
 // Twig templating object
-$loader = new Twig_Loader_Filesystem(BS\PATH_TEMPLATES);
+$loader = new Twig_Loader_Filesystem(UF\PATH_TEMPLATES);
 $twig = new Twig_Environment($loader);
 // Global Twig parameters
-$twig->addGlobal("favicon_path", BS\URI_PUBLIC_ROOT . "css/favicon.ico");
+$twig->addGlobal("favicon_path", UF\URI_PUBLIC_ROOT . "css/favicon.ico");
 $twig->addGlobal("css_includes", $pageSchema['css']);
-$twig->addGlobal("uri_css_root", BS\URI_CSS_ROOT);
+$twig->addGlobal("uri_css_root", UF\URI_CSS_ROOT);
 $twig->addGlobal("js_includes", $pageSchema['js']);
-$twig->addGlobal("uri_js_root", BS\URI_JS_ROOT);
-$twig->addGlobal("uri_public_root", BS\URI_PUBLIC_ROOT);
-$twig->addGlobal("uri_image_root", BS\URI_PUBLIC_ROOT . "images/");
-$twig->addGlobal("site_title", SITE_TITLE);
+$twig->addGlobal("uri_js_root", UF\URI_JS_ROOT);
+$twig->addGlobal("uri_public_root", UF\URI_PUBLIC_ROOT);
+$twig->addGlobal("uri_image_root", UF\URI_PUBLIC_ROOT . "images/");
+$twig->addGlobal("site_title", UF\SITE_TITLE);
 
 // URI router
 $klein = new \Klein\Klein();
 
 // Front page
-$klein->respond('GET', BS\URI_PUBLIC_RELATIVE, function(){
+$klein->respond('GET', UF\URI_PUBLIC_RELATIVE, function(){
     global $pageSchema, $loader, $twig, $email_login, $can_register;
     
     echo $twig->render("pages/public/home.html", [
         "author" => "Alex Weissman",
-        "title" => SITE_TITLE,    
+        "title" => UF\SITE_TITLE,    
         "page_title" => "A secure, modern user management system based on UserCake, jQuery, and Bootstrap.",
         "description" => "Main landing page for public access to this website.",
         "active_page" => "",
@@ -78,14 +78,14 @@ $klein->respond('GET', BS\URI_PUBLIC_RELATIVE, function(){
     ]);
 });
 
-$klein->respond('GET', BS\URI_PUBLIC_RELATIVE . 'account/login', function ($request, $response, $service) {
+$klein->respond('GET', UF\URI_PUBLIC_RELATIVE . 'account/login', function ($request, $response, $service) {
     global $pageSchema, $loader, $twig, $email_login, $can_register;
 
-    $validators = new Fortress\ClientSideValidator(BS\PATH_SCHEMA . "forms/form-login.json");
+    $validators = new Fortress\ClientSideValidator(UF\PATH_SCHEMA . "forms/login.json");
     
     echo $twig->render("pages/public/login.html", [
         "author" => "Alex Weissman",
-        "title" => SITE_TITLE,    
+        "title" => UF\SITE_TITLE,    
         "page_title" => "Login",
         "description" => "Login to your UserFrosting account.",
         "active_page" => "account/login",
@@ -95,7 +95,7 @@ $klein->respond('GET', BS\URI_PUBLIC_RELATIVE . 'account/login', function ($requ
     ]);
 });
 
-$klein->respond('GET', BS\URI_PUBLIC_RELATIVE . 'account/register', function ($request, $response, $service) {
+$klein->respond('GET', UF\URI_PUBLIC_RELATIVE . 'account/register', function ($request, $response, $service) {
     global $pageSchema, $loader, $twig, $email_login, $can_register;
 
     if (!userIdExists('1')){
@@ -104,7 +104,7 @@ $klein->respond('GET', BS\URI_PUBLIC_RELATIVE . 'account/register', function ($r
         exit();
     }
     
-    $validators = new Fortress\ClientSideValidator(BS\PATH_SCHEMA . "forms/register.json");
+    $validators = new Fortress\ClientSideValidator(UF\PATH_SCHEMA . "forms/register.json");
     
     // If registration is disabled, send them back to the home page with an error message
     if (!$can_register){
@@ -115,7 +115,7 @@ $klein->respond('GET', BS\URI_PUBLIC_RELATIVE . 'account/register', function ($r
 
     echo $twig->render("pages/public/register.html", [
         "author" => "Alex Weissman",
-        "title" => SITE_TITLE,    
+        "title" => UF\SITE_TITLE,    
         "page_title" => "Register",
         "description" => "Register for a new UserFrosting account.",
         "active_page" => "account/register",
@@ -126,15 +126,17 @@ $klein->respond('GET', BS\URI_PUBLIC_RELATIVE . 'account/register', function ($r
     ]);
 });
 
-$klein->respond('GET', BS\URI_PUBLIC_RELATIVE . 'account/forgot-password', function ($request, $response, $service) {
+$klein->respond('GET', UF\URI_PUBLIC_RELATIVE . 'account/forgot-password', function ($request, $response, $service) {
     global $pageSchema, $loader, $twig, $email_login, $can_register;
     $params = $request->paramsGet()->all(["token"]);
     if(empty($params["token"]))
         $params["token"] = null;
-        
+    
+    $validators = new Fortress\ClientSideValidator(UF\PATH_SCHEMA . "forms/forgot-password.json");
+    
     echo $twig->render("pages/public/forgot-password.html", [
         "author" => "Alex Weissman",
-        "title" => SITE_TITLE,    
+        "title" => UF\SITE_TITLE,    
         "page_title" => "Reset Password",
         "description" => "Reset your UserFrosting password.",
         "active_page" => "",
@@ -147,12 +149,14 @@ $klein->respond('GET', BS\URI_PUBLIC_RELATIVE . 'account/forgot-password', funct
 
 });
 
-$klein->respond('GET', BS\URI_PUBLIC_RELATIVE . 'account/resend-activation', function ($request, $response, $service) {
+$klein->respond('GET', UF\URI_PUBLIC_RELATIVE . 'account/resend-activation', function ($request, $response, $service) {
     global $pageSchema, $loader, $twig, $email_login, $can_register;
 
+    $validators = new Fortress\ClientSideValidator(UF\PATH_SCHEMA . "forms/resend-activation.json");
+     
     echo $twig->render("pages/public/resend-activation.html", [
         "author" => "Alex Weissman",
-        "title" => SITE_TITLE,    
+        "title" => UF\SITE_TITLE,    
         "page_title" => "Resend Activation",
         "description" => "Resend the activation email for your new UserFrosting account.",
         "active_page" => "",
@@ -171,7 +175,7 @@ $klein->onHttpError(function ($code, $router) {
             $router->response()->body(
                 $twig->render("pages/public/404.html", [
                     "author" => "Alex Weissman",
-                    "title" => SITE_TITLE,    
+                    "title" => UF\SITE_TITLE,    
                     "page_title" => "404 Error",
                     "description" => "We couldn't deliver.  We're sorry."
                 ])
