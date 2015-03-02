@@ -6,11 +6,15 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
+    'AccountController' => $baseDir . '/UserFrosting/controllers/controller.php',
+    'BaseController' => $baseDir . '/UserFrosting/controllers/controller.php',
     'ChromePhp' => $baseDir . '/UserFrosting/chrome.php',
     'Fortress\\ClientSideValidator' => $vendorDir . '/alexweissman/fortress/fortress/ClientSideValidator.php',
     'Fortress\\DataSanitizer' => $vendorDir . '/alexweissman/fortress/fortress/DataSanitizer.php',
     'Fortress\\DataSanitizerInterface' => $vendorDir . '/alexweissman/fortress/fortress/DataSanitizer.php',
     'Fortress\\HTTPRequestFortress' => $vendorDir . '/alexweissman/fortress/fortress/HTTPRequestFortress.php',
+    'Fortress\\MessageStream' => $vendorDir . '/alexweissman/fortress/fortress/MessageStream.php',
+    'Fortress\\MessageTranslator' => $vendorDir . '/alexweissman/fortress/fortress/MessageTranslator.php',
     'Fortress\\RequestSchema' => $vendorDir . '/alexweissman/fortress/fortress/RequestSchema.php',
     'Fortress\\ServerSideValidator' => $vendorDir . '/alexweissman/fortress/fortress/ServerSideValidator.php',
     'Fortress\\ServerSideValidatorInterface' => $vendorDir . '/alexweissman/fortress/fortress/ServerSideValidator.php',

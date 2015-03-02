@@ -31,6 +31,9 @@ THE SOFTWARE.
 
 namespace UserFrosting;
 
+// Time zone
+date_default_timezone_set("America/New_York");
+
 // Used to force backend scripts to log errors rather than print them as output
 function logAllErrors($errno, $errstr, $errfile, $errline, array $errcontext) {
 	ini_set("log_errors", 1);
@@ -66,18 +69,10 @@ if (!defined("UserFrosting\SCHEME_PREFIX")){
 if (SERVER_DEV) {
     /*********** Dev configuration **********/
     $config = [
-    /*
         "db" => [
             "dbname"   => "userfrosting", //Name of Database
             "username" => "root", //Name of database user
             "password" => "password", //Password for database user
-            "host" => "localhost"
-        ]
-        */
-        "db" => [
-            "dbname"   => "uf4", //Name of Database
-            "username" => "userfrosting", //Name of database user
-            "password" => "XCUvP2z7peePCnQ2", //Password for database user
             "host" => "localhost"
         ]
     ];
@@ -161,6 +156,9 @@ defined("UserFrosting\PATH_CSS_ROOT")
 defined("Userfrosting\PATH_UF_ROOT")
     or define("Userfrosting\PATH_UF_ROOT", realpath(dirname(__FILE__)) . "/");
 
+defined("UserFrosting\PATH_VENDOR_ROOT")
+    or define ("UserFrosting\PATH_VENDOR_ROOT", realpath(dirname(__FILE__) . "/../vendor") . "/");
+    
 /* The root directory in which the UserFrosting templates reside. */
 defined("UserFrosting\PATH_TEMPLATES")
     or define("UserFrosting\PATH_TEMPLATES", PATH_UF_ROOT . "templates/");
@@ -191,11 +189,11 @@ require_once("template_functions.php");
 require_once("password.php");
 require_once("db_functions.php");
 require_once("pageschema.php");
-require_once("../vendor/autoload.php");
+require_once(PATH_VENDOR_ROOT . "autoload.php");
 
 // Set validation parameters
 
-\Valitron\Validator::langDir(__DIR__.'/validation/lang'); // always set langDir before lang.
+\Valitron\Validator::langDir(PATH_UF_ROOT . "/locale/valitron/"); // always set langDir before lang.
 \Valitron\Validator::lang('en');
 
 //Retrieve basic configuration settings
@@ -257,13 +255,6 @@ $master_account = 1;
 $default_hooks = array("#WEBSITENAME#","#WEBSITEURL#","#DATE#");
 $default_replace = array($websiteName,SITE_ROOT,$emailDate);
 
-// The dirname(__FILE__) . "/..." construct tells PHP to look for the include file in the same directory as this (the config) file
-if (!file_exists($language)) {
-	$language = dirname(__FILE__) . "/languages/en.php";
-}
-
-if(!isset($language)) $language = dirname(__FILE__) . "/languages/en.php";
-
 function getAbsoluteDocumentPath($localPath){
 	return SITE_ROOT . getRelativeDocumentPath($localPath);
 }
@@ -292,7 +283,6 @@ function getRelativeDocumentPath($localPath){
 }
 
 //Pages to require
-require_once($language);
 require_once("validate_form.php");
 require_once("authorization.php");
 require_once("secure_functions.php");
@@ -305,6 +295,21 @@ require_once("class.user.php");
 
 session_name(SESSION_NAME);
 session_start();
+
+/*
+// The dirname(__FILE__) . "/..." construct tells PHP to look for the include file in the same directory as this (the config) file
+if (!file_exists($language)) {
+	$language = dirname(__FILE__) . "/languages/en.php";
+}
+
+if(!isset($language)) $language = dirname(__FILE__) . "/languages/en.php";
+*/
+
+// Set the message stream
+\Fortress\HTTPRequestFortress::setMessageStream('userAlerts');
+
+// Set the translation path
+\Fortress\MessageTranslator::setTranslationTable(PATH_UF_ROOT . "locale/en_US.php");
 
 //Global User Object Var
 //loggedInUser can be used globally if constructed

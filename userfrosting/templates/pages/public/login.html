@@ -7,7 +7,7 @@
       <div class="jumbotron">
         <h1>Welcome to UserFrosting!</h1>
         <p class="lead">Please sign in.</p>
-        <form name="login" method="post" action="api/process_login.php" class="form-horizontal">
+        <form name="login" method="post" action="{{uri_public_root}}account/login" class="form-horizontal">
             <div class="row">
               <div id="display-alerts" class="col-lg-12">
               </div>
@@ -22,7 +22,7 @@
                 </div>
               </div>
               <div class="col-md-12">
-                <button type="submit" name="btn_login" class="btn btn-success  "  data-loading-text="Please wait..." >
+                <button type="submit" class="btn btn-success  "  data-loading-text="Please wait..." >
                     Login
                 </button>
               </div>
@@ -36,6 +36,7 @@
         $(document).ready(function() {            
           alertWidget('display-alerts');
           // Process form     
+
           $("form[name='login']").formValidation({
             framework: 'bootstrap',
             // Feedback icons
@@ -45,17 +46,18 @@
                 validating: 'fa fa-refresh'
             },
             fields: {{validators | raw}}
-          });
-          
-          $("form[name='login']").submit(function(e){
-            // Prevent form from submitting twice
+          }).on('success.form.fv', function(e) {
+            // Prevent double form submission
             e.preventDefault();
-            var form = $(this);   
+
+            // Get the form instance
+            var form = $(e.target);
+
             // Serialize and post to the backend script in ajax mode
             var serializedData = form.serialize();
             serializedData += '&ajaxMode=true';     
             //console.log(serializedData);
-            var url = APIPATH + "process_login.php";
+            var url = form.attr('action');
             $.ajax({  
               type: "POST",  
               url: url,  
@@ -65,9 +67,9 @@
                 if (resultJSON['errors'] && resultJSON['errors'] > 0){
                   alertWidget('display-alerts');
                 } else {
-                  window.location.replace("account");
+                  window.location.replace("{{uri_public_root}}account/");
                 }
-            });
+            });    
           });
           
         });

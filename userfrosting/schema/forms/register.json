@@ -4,16 +4,10 @@
             "length" : {
                 "min" : 1,
                 "max" : 50,
-                "messages" : {
-                    "default" : "'Username' must be between 1 and 50 characters long.",
-                    "es_US" : "Su nombre de usuario debe estar entre 1 y 50 caracteres de longitud"
-                }
+                "message" : "ACCOUNT_USER_CHAR_LIMIT"
             },
             "required" : {
-                "messages" : {
-                    "default" : "'User name' is required.",
-                    "es_US" : "Por favor, ingrese su nombre de usuario"
-                }
+                "message" : "ACCOUNT_SPECIFY_USERNAME"
             }
         }
     },
@@ -22,57 +16,37 @@
             "length" : {
                 "min" : 1,
                 "max" : 50,
-                "messages" : {
-                    "default" : "'Display name' must be between 1 and 50 characters long.",
-                    "es_US" : "Su nombre debe estar entre 1 y 50 caracteres de longitud"
-                }
+                "message" : "ACCOUNT_DISPLAY_CHAR_LIMIT"
             },
             "required" : {
-                "messages" : {
-                    "default" : "'Display name' is required.",
-                    "es_US" : "Por favor, ingrese su nombre"
-                }
+                "message" : "ACCOUNT_SPECIFY_DISPLAY_NAME"
             }
         }
     },          
     "email" : {
         "validators" : {
             "required" : {
-                "messages" : {
-                    "default" : "You must specify an email address."
-                }
+                "message" : "ACCOUNT_SPECIFY_EMAIL"
             },
             "length" : {
                 "min" : 1,
                 "max" : 150,
-                "messages" : {
-                    "default" : "'Email' must be between 1 and 150 characters long.",
-                    "es_US" : "Dirección de correo electrónico debe estar entre 1 y 150 caracteres de longitud"
-                }
+                "message" : "ACCOUNT_EMAIL_CHAR_LIMIT"
             },
             "email" : {
-                "messages" : {
-                    "default" : "'Email' must be a valid email address.",
-                    "es_US" : "Dirección de correo electrónico no válida"
-                }
+                "message" : "ACCOUNT_INVALID_EMAIL"
             }
         }
     },
     "password" : {
         "validators" : {
             "required" : {
-                "messages" : {
-                    "default" : "'Password' is required.",
-                    "es_US" : "Por favor, ingrese su contraseña"
-                }
+                "message" : "ACCOUNT_SPECIFY_PASSWORD"
             },
             "length" : {
                 "min" : 8,
                 "max" : 50,
-                "messages" : {
-                    "default" : "'Password' must be between 8 and 50 characters long.",
-                    "es_US" : "La contraseña debe tener entre 8 y 50 caracteres de longitud"
-                }
+                "message" : "ACCOUNT_PASS_CHAR_LIMIT"
             }
         },
         "sanitizers" : {
@@ -82,25 +56,16 @@
     "passwordc" : {
         "validators" : {
             "required" : {
-                "messages" : {
-                    "default" : "'Confirm password' is required.",
-                    "es_US" : "Por favor, ingrese su contraseña"
-                }
+                "message" : "ACCOUNT_SPECIFY_PASSWORD"
             },
             "matches" : {
                 "field" : "password",
-                "messages" : {
-                    "default" : "Your password and confirmation password must match.",
-                    "es_US" : "Su contraseña y confirmación de contraseña debe coincidir"
-                }
+                "message" : "ACCOUNT_PASS_MISMATCH"
             },
             "length" : {
                 "min" : 8,
                 "max" : 50,
-                "messages" : {
-                    "default" : "'Confirm password' must be between 8 and 50 characters long.",
-                    "es_US" : "La contraseña debe tener entre 8 y 50 caracteres de longitud"
-                }
+                "message" : "ACCOUNT_PASS_CHAR_LIMIT"
             }
         },
         "sanitizers" : {
@@ -110,9 +75,7 @@
     "captcha" : {
         "validators" : {
             "required" : {
-                "messages" : {
-                    "default" : "Please enter the captcha code."
-                }
+                "message" : "Please enter the captcha code."
             }
         }
     }

@@ -1,36 +1,7 @@
 <?php
-/*
-
-UserFrosting Version: 0.2.2
-By Alex Weissman
-Copyright (c) 2014
-
-Based on the UserCake user management system, v2.0.2.
-Copyright (c) 2009-2012
-
-UserFrosting, like UserCake, is 100% free and open-source.
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the 'Software'), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.
-
-*/
 
 /*
-%m1% - Dymamic markers which are replaced at run time by the relevant index.
+{{name}} - Dymamic markers which are replaced at run time by the relevant index.
 */
 
 $lang = array();
@@ -45,32 +16,34 @@ $lang = array_merge($lang,array(
 
 //Account
 $lang = array_merge($lang,array(
-	"ACCOUNT_SPECIFY_USERNAME" 		=> "Please enter your username",
-	"ACCOUNT_SPECIFY_PASSWORD" 		=> "Please enter your password",
-	"ACCOUNT_SPECIFY_EMAIL"			=> "Please enter your email address",
+	"ACCOUNT_SPECIFY_USERNAME" 		=> "Please enter your user name.",
+	"ACCOUNT_SPECIFY_DISPLAY_NAME" 	=> "Please enter your display name.",
+    "ACCOUNT_SPECIFY_PASSWORD" 		=> "Please enter your password.",
+	"ACCOUNT_SPECIFY_EMAIL"			=> "Please enter your email address.",
 	"ACCOUNT_INVALID_EMAIL"			=> "Invalid email address",
     "ACCOUNT_INVALID_USER_ID"		=> "The requested user id does not exist.",
     "ACCOUNT_INVALID_PAY_TYPE"		=> "Invalid pay type.  Pay type must be either 'deduct fee' or 'hourly'.",
-	"ACCOUNT_USER_OR_EMAIL_INVALID"		=> "Username or email address is invalid",
-	"ACCOUNT_USER_OR_PASS_INVALID"		=> "Username or password is invalid",
-	"ACCOUNT_ALREADY_ACTIVE"		=> "Your account is already activated",
+	"ACCOUNT_USER_OR_EMAIL_INVALID"		=> "Username or email address is invalid.",
+	"ACCOUNT_USER_OR_PASS_INVALID"		=> "Username or password is invalid.",
+	"ACCOUNT_ALREADY_ACTIVE"		=> "Your account is already activated.",
 	"ACCOUNT_REGISTRATION_DISABLED" => "We're sorry, account registration has been disabled.",
-    "ACCOUNT_INACTIVE"			=> "Your account is in-active. Check your emails / spam folder for account activation instructions",
+    "ACCOUNT_INACTIVE"			=> "Your account is in-active. Check your emails / spam folder for account activation instructions.",
 	"ACCOUNT_DISABLED"			=> "This account has been disabled.  Please contact us for more information.",
-    "ACCOUNT_USER_CHAR_LIMIT"		=> "Your username must be between %m1% and %m2% characters in length",
-	"ACCOUNT_DISPLAY_CHAR_LIMIT"		=> "Your display name must be between %m1% and %m2% characters in length",
-	"ACCOUNT_PASS_CHAR_LIMIT"		=> "Your password must be between %m1% and %m2% characters in length",
-	"ACCOUNT_TITLE_CHAR_LIMIT"		=> "Titles must be between %m1% and %m2% characters in length",
+    "ACCOUNT_USER_CHAR_LIMIT"		=> "Your username must be between {{min}} and {{max}} characters in length.",
+	"ACCOUNT_DISPLAY_CHAR_LIMIT"		=> "Your display name must be between {{min}} and {{max}} characters in length.",
+	"ACCOUNT_PASS_CHAR_LIMIT"		=> "Your password must be between {{min}} and {{max}} characters in length.",
+	"ACCOUNT_EMAIL_CHAR_LIMIT"		=> "Email must be between {{min}} and {{max}} characters in length.",
+    "ACCOUNT_TITLE_CHAR_LIMIT"		=> "Titles must be between {{min}} and {{max}} characters in length.",
 	"ACCOUNT_PASS_MISMATCH"			=> "Your password and confirmation password must match",
 	"ACCOUNT_DISPLAY_INVALID_CHARACTERS"	=> "Display name can only include alpha-numeric characters",
-	"ACCOUNT_USERNAME_IN_USE"		=> "Username %m1% is already in use",
-	"ACCOUNT_DISPLAYNAME_IN_USE"		=> "Display name %m1% is already in use",
-	"ACCOUNT_EMAIL_IN_USE"			=> "Email %m1% is already in use",
-	"ACCOUNT_LINK_ALREADY_SENT"		=> "An activation email has already been sent to this email address in the last %m1% hour(s)",
+	"ACCOUNT_USERNAME_IN_USE"		=> "Username {{user_name}} is already in use",
+	"ACCOUNT_DISPLAYNAME_IN_USE"		=> "Display name {{display_name}} is already in use",
+	"ACCOUNT_EMAIL_IN_USE"			=> "Email {{email}} is already in use",
+	"ACCOUNT_LINK_ALREADY_SENT"		=> "An activation email has already been sent to this email address in the last {{last_sent_interval}} hour(s)",
 	"ACCOUNT_NEW_ACTIVATION_SENT"		=> "We have emailed you a new activation link, please check your email",
 	"ACCOUNT_SPECIFY_NEW_PASSWORD"		=> "Please enter your new password",	
 	"ACCOUNT_SPECIFY_CONFIRM_PASSWORD"	=> "Please confirm your new password",
-	"ACCOUNT_NEW_PASSWORD_LENGTH"		=> "New password must be between %m1% and %m2% characters in length",	
+	"ACCOUNT_NEW_PASSWORD_LENGTH"		=> "New password must be between {{min}} and {{max}} characters in length",	
 	"ACCOUNT_PASSWORD_INVALID"		=> "Current password doesn't match the one we have on record",	
 	"ACCOUNT_DETAILS_UPDATED"		=> "Account details updated",
 	"ACCOUNT_ACTIVATION_MESSAGE"		=> "You will need to activate your account before you can login. Please follow the link below to activate your account. \n\n
@@ -156,6 +129,7 @@ $lang = array_merge($lang,array(
 	"PAGE_ACCESS_ADDED"			=> "Page access added for %m1% permission level(s)",
     "ACCESS_DENIED" => "Hmm, looks like you don't have permission to do that.",
     "LOGIN_REQUIRED" => "Sorry, you must be logged in to access this resource.",
+    "LOGIN_ALREADY_COMPLETE" => "You are already logged in!",
 	));
 
 //Permissions
@@ -178,4 +152,6 @@ $lang = array_merge($lang,array(
 $lang = array_merge($lang,array(
     "PM_RECEIVER_DELETION_SUCCESSFUL"   => "Message Deleted",
 ));
+
+return $lang;
 ?>

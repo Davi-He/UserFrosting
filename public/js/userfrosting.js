@@ -28,7 +28,7 @@ THE SOFTWARE.
 
 */
 
-var APIPATH = getSitePath() + "api/";
+var APIPATH = getSitePath();
 var FORMSPATH = getSitePath() + "forms/";
 
 // Returns the base URL of the website, assuming that this script is in the '/js' subdirectory of the site.
@@ -422,7 +422,7 @@ function addAlert(type, msg) {
 
 // Load alerts from $_SESSION['userAlerts'] variable into specified element
 function alertWidget(widget_id){
-	var url = APIPATH + 'user_alerts.php';
+	var url = APIPATH + "alerts";
 	$.getJSON( url, {})
 	.done(function( data ) {
 		var alertHTML = "";
@@ -444,7 +444,7 @@ function alertWidget(widget_id){
 
 function processJSONResult(result) {
 	if (!result) {
-		addAlert("danger", "Oops, this feature doesn't seem to be working at the moment.  Totally our bad.");
+		//addAlert("danger", "Oops, this feature doesn't seem to be working at the moment.  Totally our bad.");
 		return {"errors": 1, "successes": 0};
 	} else {
 		try {
@@ -455,7 +455,7 @@ function processJSONResult(result) {
 			}
 		} catch (err) {
 			console.log("Backend error: " + result);
-			addAlert("danger", "Oops, looks like our server might have goofed.  If you're an admin, please check the PHP error logs.");
+			//addAlert("danger", "Oops, looks like our server might have goofed.  If you're an admin, please check the PHP error logs.");
             return {"errors": 1, "successes": 0};
 		}	
 	}

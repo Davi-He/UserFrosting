@@ -2,21 +2,18 @@
     "user_name" : {
         "validators" : {
             "required" : {
-                "messages" : {
-                    "default" : "'Username' is required.",
-                    "es_US" : "Por favor, ingrese su nombre de usuario"
-                }
+                "message" : "ACCOUNT_SPECIFY_USERNAME"
             }
         }
     },
     "password" : {
         "validators" : {
             "required" : {
-                "messages" : {
-                    "default" : "'Password' is required.",
-                    "es_US" : "Por favor, ingrese su contraseña"
-                }
+                "message" : "ACCOUNT_SPECIFY_PASSWORD"
             }
-        }      
+        },
+        "sanitizers" : {
+            "raw" : {}
+        }
     }
 }

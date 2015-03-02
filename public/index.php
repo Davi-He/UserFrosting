@@ -30,157 +30,69 @@ THE SOFTWARE.
 */
 
 require_once("../userfrosting/config-userfrosting.php");
+require_once("../userfrosting/controllers/controller.php");
+require_once("../userfrosting/controllers/accountcontroller.php");
 
 use \UserFrosting as UF;
 
 // Public page
 setReferralPage(UF\getAbsoluteDocumentPath(__FILE__));
 
-//Forward the user to their default page if he/she is already logged in
-if(isUserLoggedIn()) {
-	addAlert("warning", "You're already logged in!");
-    header("Location: account");
-	exit();
-}
-
-// Load page schema
-$pageSchema = UF\PageSchema::load("default", UF\PATH_SCHEMA . "pages/pages.json");
-
-// Twig templating object
-$loader = new Twig_Loader_Filesystem(UF\PATH_TEMPLATES);
-$twig = new Twig_Environment($loader);
-// Global Twig parameters
-$twig->addGlobal("favicon_path", UF\URI_PUBLIC_ROOT . "css/favicon.ico");
-$twig->addGlobal("css_includes", $pageSchema['css']);
-$twig->addGlobal("uri_css_root", UF\URI_CSS_ROOT);
-$twig->addGlobal("js_includes", $pageSchema['js']);
-$twig->addGlobal("uri_js_root", UF\URI_JS_ROOT);
-$twig->addGlobal("uri_public_root", UF\URI_PUBLIC_ROOT);
-$twig->addGlobal("uri_image_root", UF\URI_PUBLIC_ROOT . "images/");
-$twig->addGlobal("site_title", UF\SITE_TITLE);
-
 // URI router
 $klein = new \Klein\Klein();
 
 // Front page
 $klein->respond('GET', UF\URI_PUBLIC_RELATIVE, function(){
-    global $pageSchema, $loader, $twig, $email_login, $can_register;
-    
-    echo $twig->render("pages/public/home.html", [
-        "author" => "Alex Weissman",
-        "title" => UF\SITE_TITLE,    
-        "page_title" => "A secure, modern user management system based on UserCake, jQuery, and Bootstrap.",
-        "description" => "Main landing page for public access to this website.",
-        "active_page" => "",
-        "email_login" => $email_login,
-        "can_register" => $can_register,
-        "captcha_image" => generateCaptcha()
-    ]);
+    $controller = new AccountController();
+    return $controller->pageHome();
 });
 
-$klein->respond('GET', UF\URI_PUBLIC_RELATIVE . 'account/login', function ($request, $response, $service) {
-    global $pageSchema, $loader, $twig, $email_login, $can_register;
-
-    $validators = new Fortress\ClientSideValidator(UF\PATH_SCHEMA . "forms/login.json");
+// Account-related actions
+$klein->respond('GET', UF\URI_PUBLIC_RELATIVE . 'account/[:action]', function ($request, $response, $service) {
+    global $can_register;
     
-    echo $twig->render("pages/public/login.html", [
-        "author" => "Alex Weissman",
-        "title" => UF\SITE_TITLE,    
-        "page_title" => "Login",
-        "description" => "Login to your UserFrosting account.",
-        "active_page" => "account/login",
-        "email_login" => $email_login,
-        "can_register" => $can_register,
-        "validators" => $validators->formValidationRulesJson()
-    ]);
-});
-
-$klein->respond('GET', UF\URI_PUBLIC_RELATIVE . 'account/register', function ($request, $response, $service) {
-    global $pageSchema, $loader, $twig, $email_login, $can_register;
-
-    if (!userIdExists('1')){
-        addAlert("danger", lang("MASTER_ACCOUNT_NOT_EXISTS"));
-        header("Location: install/wizard_root_user.php");
-        exit();
+    $controller = new AccountController();
+    
+    switch ($request->action) {
+        case "login":               return $controller->pageLogin();
+        case "logout":              return $controller->logout();        
+        case "register":            return $controller->pageRegister($can_register);
+        case "resend-activation":   return $controller->pageResendActivation();
+        case "forgot-password":     return $controller->pageForgotPassword($request->token);    
+        default:                    return $controller->page404();   
     }
+});
+
+$klein->respond('POST', UF\URI_PUBLIC_RELATIVE . 'account/[:action]', function ($request, $response, $service) {
+    $controller = new AccountController();
     
-    $validators = new Fortress\ClientSideValidator(UF\PATH_SCHEMA . "forms/register.json");
-    
-    // If registration is disabled, send them back to the home page with an error message
-    if (!$can_register){
-        addAlert("danger", lang("ACCOUNT_REGISTRATION_DISABLED"));
-        header("Location: account/login");
-        exit();
+    switch ($request->action) {
+        case "login":               return $controller->login($request->params());
+        case "register":            return $controller->register($request->params());
+        case "resend-activation":   return $controller->resendActivation($request->params());
+        case "forgot-password":     return $controller->forgotPassword($request->params());    
+        default:                    return $controller->page404();   
     }
-
-    echo $twig->render("pages/public/register.html", [
-        "author" => "Alex Weissman",
-        "title" => UF\SITE_TITLE,    
-        "page_title" => "Register",
-        "description" => "Register for a new UserFrosting account.",
-        "active_page" => "account/register",
-        "email_login" => $email_login,
-        "can_register" => $can_register,
-        "captcha_image" => generateCaptcha(),
-        "validators" => $validators->formValidationRulesJson()
-    ]);
 });
 
-$klein->respond('GET', UF\URI_PUBLIC_RELATIVE . 'account/forgot-password', function ($request, $response, $service) {
-    global $pageSchema, $loader, $twig, $email_login, $can_register;
-    $params = $request->paramsGet()->all(["token"]);
-    if(empty($params["token"]))
-        $params["token"] = null;
-    
-    $validators = new Fortress\ClientSideValidator(UF\PATH_SCHEMA . "forms/forgot-password.json");
-    
-    echo $twig->render("pages/public/forgot-password.html", [
-        "author" => "Alex Weissman",
-        "title" => UF\SITE_TITLE,    
-        "page_title" => "Reset Password",
-        "description" => "Reset your UserFrosting password.",
-        "active_page" => "",
-        "email_login" => $email_login,
-        "can_register" => $can_register,
-        "token" => $params["token"],
-        "confirm_ajax" => $params["token"] ? 1 : 0,
-        "validators" => $validators->formValidationRulesJson()
-    ]);
-
+// PHP Info (only visible as master user)
+$klein->respond('GET', UF\URI_PUBLIC_RELATIVE . 'phpinfo', function ($request, $response, $service) {
+    echo phpinfo();
 });
 
-$klein->respond('GET', UF\URI_PUBLIC_RELATIVE . 'account/resend-activation', function ($request, $response, $service) {
-    global $pageSchema, $loader, $twig, $email_login, $can_register;
-
-    $validators = new Fortress\ClientSideValidator(UF\PATH_SCHEMA . "forms/resend-activation.json");
-     
-    echo $twig->render("pages/public/resend-activation.html", [
-        "author" => "Alex Weissman",
-        "title" => UF\SITE_TITLE,    
-        "page_title" => "Resend Activation",
-        "description" => "Resend the activation email for your new UserFrosting account.",
-        "active_page" => "",
-        "email_login" => $email_login,
-        "can_register" => $can_register,
-        "validators" => $validators->formValidationRulesJson()
-    ]);
-
+// Alert stream
+$klein->respond('GET', UF\URI_PUBLIC_RELATIVE . 'alerts', function ($request, $response, $service) {
+    $controller = new BaseController();
+    return $controller->getAlerts();
 });
 
 // See https://github.com/chriso/klein.php/wiki/Handling-404%27s
 $klein->onHttpError(function ($code, $router) {
-    global $pageSchema, $loader, $twig;
+
     switch ($code) {
         case 404:
-            $router->response()->body(
-                $twig->render("pages/public/404.html", [
-                    "author" => "Alex Weissman",
-                    "title" => UF\SITE_TITLE,    
-                    "page_title" => "404 Error",
-                    "description" => "We couldn't deliver.  We're sorry."
-                ])
-            );
-            break;
+            $controller = new BaseController();
+            return $controller->page404();
         case 405:
             $router->response()->body(
                 'You can\'t do that!'
